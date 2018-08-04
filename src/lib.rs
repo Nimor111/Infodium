@@ -1,5 +1,5 @@
 #[macro_use] extern crate serde_derive;
-pub extern crate rocket_contrib;
+#[macro_use] pub extern crate rocket_contrib;
 #[macro_use] pub extern crate diesel;
 
 pub extern crate r2d2;
