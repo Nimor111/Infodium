@@ -6,6 +6,7 @@ extern crate infodium;
 use infodium::db;
 use infodium::rocket;
 use infodium::routes::player_routes;
+use infodium::routes::team_routes;
 
 fn main() {
     rocket::ignite()
@@ -17,6 +18,14 @@ fn main() {
                 player_routes::create_player,
                 player_routes::update_player,
                 player_routes::delete_player
+            ],
+        ).mount(
+            "/teams",
+            routes![
+                team_routes::get_teams,
+                team_routes::create_team,
+                team_routes::update_team,
+                team_routes::delete_team
             ],
         ).launch();
 }
