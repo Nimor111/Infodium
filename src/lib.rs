@@ -7,6 +7,7 @@
 #[macro_use] pub extern crate rocket_contrib;
 #[macro_use] pub extern crate diesel;
 #[macro_use] pub extern crate dotenv_codegen;
+extern crate chrono;
 
 pub extern crate r2d2;
 pub extern crate rocket;

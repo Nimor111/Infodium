@@ -70,7 +70,7 @@ impl Team {
         teams::table
             .find(team_id)
             .first(conn)
-            .expect("Error getting player")
+            .expect("Error getting team!")
     }
 
     pub fn delete(team_id: i32, conn: &PgConnection) -> bool {
