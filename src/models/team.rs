@@ -5,27 +5,31 @@ use diesel::prelude::*;
 use schema::teams;
 use schema::teams::dsl::*;
 
+use models::league::League;
+
 #[table_name = "teams"]
+#[belongs_to(League)]
 #[derive(Serialize, Deserialize, Associations, Queryable, AsChangeset, Debug)]
 pub struct Team {
     pub id: i32,
+    pub league_id: i32,
     pub name: String,
     pub tla: String,
     pub address: Option<String>,
     pub website: Option<String>,
     pub facebook: Option<String>,
-    pub league: i32,
 }
 
 #[table_name = "teams"]
-#[derive(Insertable, Deserialize, Serialize)]
+#[belongs_to(League)]
+#[derive(Insertable, Associations, Deserialize, Serialize)]
 pub struct NewTeam {
     pub name: String,
     pub tla: String,
     pub address: Option<String>,
     pub website: Option<String>,
     pub facebook: Option<String>,
-    pub league: i32,
+    pub league_id: i32,
 }
 
 impl Team {
@@ -40,7 +44,7 @@ impl Team {
             address: team.address,
             website: team.website,
             facebook: team.facebook,
-            league: team.league,
+            league_id: team.league_id,
         };
 
         diesel::insert_into(teams::table)
@@ -63,7 +67,7 @@ impl Team {
                 address: team.address,
                 website: team.website,
                 facebook: team.facebook,
-                league: team.league,
+                league_id: team.league_id,
             }).execute(conn)
             .expect("Error updating team!");
 

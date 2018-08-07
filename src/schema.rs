@@ -21,16 +21,20 @@ table! {
 table! {
     teams (id) {
         id -> Int4,
+        league_id -> Int4,
         name -> Text,
         tla -> Text,
         address -> Nullable<Text>,
         website -> Nullable<Text>,
         facebook -> Nullable<Text>,
-        league -> Int4,
     }
 }
 
 joinable!(players -> teams (team_id));
-joinable!(teams -> leagues (league));
+joinable!(teams -> leagues (league_id));
 
-allow_tables_to_appear_in_same_query!(leagues, players, teams,);
+allow_tables_to_appear_in_same_query!(
+    leagues,
+    players,
+    teams,
+);
