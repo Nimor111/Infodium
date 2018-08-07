@@ -1,2 +1,6 @@
+# out files
 /target
 **/*.rs.bk
+
+# config file
+.env

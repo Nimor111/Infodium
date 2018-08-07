@@ -9,7 +9,7 @@ use r2d2_diesel::ConnectionManager;
 use diesel::mysql::MysqlConnection;
 
 pub type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
-static DATABASE_URL: &'static str = env!("DATABASE_URL");
+static DATABASE_URL: &'static str = dotenv!("DATABASE_URL");
 
 pub fn connect() -> Pool {
     let manager = ConnectionManager::<MysqlConnection>::new(DATABASE_URL);
