@@ -1,31 +1,36 @@
 table! {
     leagues (id) {
-        id -> Integer,
-        name -> Varchar,
-        country -> Varchar,
+        id -> Int4,
+        name -> Text,
+        country -> Text,
         current_matchday -> Nullable<Date>,
     }
 }
 
 table! {
     players (id) {
-        id -> Integer,
-        name -> Varchar,
-        position -> Varchar,
-        country -> Varchar,
-        nationality -> Varchar,
+        id -> Int4,
+        team_id -> Nullable<Int4>,
+        name -> Text,
+        position -> Text,
+        country -> Text,
+        nationality -> Text,
     }
 }
 
 table! {
     teams (id) {
-        id -> Integer,
-        name -> Varchar,
-        tla -> Varchar,
-        address -> Nullable<Varchar>,
-        website -> Nullable<Varchar>,
-        facebook -> Nullable<Varchar>,
+        id -> Int4,
+        name -> Text,
+        tla -> Text,
+        address -> Nullable<Text>,
+        website -> Nullable<Text>,
+        facebook -> Nullable<Text>,
+        league -> Int4,
     }
 }
+
+joinable!(players -> teams (team_id));
+joinable!(teams -> leagues (league));
 
 allow_tables_to_appear_in_same_query!(leagues, players, teams,);

@@ -6,19 +6,19 @@ use std::ops::Deref;
 use r2d2;
 use r2d2_diesel::ConnectionManager;
 
-use diesel::mysql::MysqlConnection;
+use diesel::pg::PgConnection;
 
-pub type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
+pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 static DATABASE_URL: &'static str = dotenv!("DATABASE_URL");
 
 pub fn connect() -> Pool {
-    let manager = ConnectionManager::<MysqlConnection>::new(DATABASE_URL);
+    let manager = ConnectionManager::<PgConnection>::new(DATABASE_URL);
     r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create pool!")
 }
 
-pub struct Connection(pub r2d2::PooledConnection<ConnectionManager<MysqlConnection>>);
+pub struct Connection(pub r2d2::PooledConnection<ConnectionManager<PgConnection>>);
 
 /// Attempts to retrieve a single connection from the managed database pool. If
 /// no pool is currently managed, fails with an `InternalServerError` status. If
@@ -36,7 +36,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Connection {
 }
 
 impl Deref for Connection {
-    type Target = MysqlConnection;
+    type Target = PgConnection;
 
     fn deref(&self) -> &Self::Target {
         &self.0

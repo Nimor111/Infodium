@@ -1,9 +1,8 @@
 CREATE TABLE players (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `name` VARCHAR(60) NOT NULL,
-    position VARCHAR(10) NOT NULL,
-    country VARCHAR(60) NOT NULL,
-    nationality VARCHAR(60) NOT NULL,
-    team INTEGER,
-    FOREIGN KEY (team) REFERENCES teams(id)
+    id SERIAL PRIMARY KEY,
+    team_id INTEGER REFERENCES teams (id),
+    name TEXT NOT NULL,
+    position TEXT NOT NULL,
+    country TEXT NOT NULL,
+    nationality TEXT NOT NULL
 );
