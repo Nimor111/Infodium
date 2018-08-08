@@ -44,18 +44,13 @@ fn gen_team(lid: i32) -> NewTeam {
     }
 }
 
-fn main() {
+fn main() -> Result<(), diesel::result::Error> {
     let conn = connect().get().unwrap();
 
-    sql_query("ALTER SEQUENCE leagues_id_seq RESTART WITH 1")
-        .execute(&*conn)
-        .expect("Error!");
-    sql_query("ALTER SEQUENCE teams_id_seq RESTART WITH 1")
-        .execute(&*conn)
-        .expect("Error!");
-    sql_query("ALTER SEQUENCE players_id_seq RESTART WITH 1")
-        .execute(&*conn)
-        .expect("Error!");
+    // Reset table serial ids
+    sql_query("ALTER SEQUENCE leagues_id_seq RESTART WITH 1").execute(&*conn)?;
+    sql_query("ALTER SEQUENCE teams_id_seq RESTART WITH 1").execute(&*conn)?;
+    sql_query("ALTER SEQUENCE players_id_seq RESTART WITH 1").execute(&*conn)?;
 
     // Clear the database before running seed
     diesel::delete(players)
@@ -85,4 +80,6 @@ fn main() {
         .values(&new_teams)
         .execute(&*conn)
         .expect("Error inserting teams!");
+
+    Ok(())
 }
