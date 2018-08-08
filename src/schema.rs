@@ -33,8 +33,4 @@ table! {
 joinable!(players -> teams (team_id));
 joinable!(teams -> leagues (league_id));
 
-allow_tables_to_appear_in_same_query!(
-    leagues,
-    players,
-    teams,
-);
+allow_tables_to_appear_in_same_query!(leagues, players, teams,);
