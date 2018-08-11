@@ -6,6 +6,7 @@ table! {
         ident -> Text,
         result -> Nullable<Text>,
         venue -> Text,
+        matchday -> Nullable<Date>,
     }
 }
 

@@ -4,5 +4,6 @@ CREATE TABLE games (
     league_id INTEGER REFERENCES leagues (id) NOT NULL,
     ident TEXT NOT NULL,
     result TEXT,
-    venue TEXT NOT NULL
+    venue TEXT NOT NULL,
+    matchday DATE
 );

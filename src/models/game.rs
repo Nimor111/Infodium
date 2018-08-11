@@ -23,6 +23,7 @@ pub struct Game {
     pub ident: String,
     pub result: Option<String>,
     pub venue: String,
+    pub matchday: Option<NaiveDate>,
 }
 
 #[table_name = "games"]
@@ -35,6 +36,7 @@ pub struct NewGame {
     pub ident: String,
     pub result: Option<String>,
     pub venue: String,
+    pub matchday: Option<NaiveDate>,
 }
 
 impl Game {
@@ -49,6 +51,7 @@ impl Game {
             league_id: game.league_id,
             venue: game.venue,
             ident: format!("{}", Uuid::new_v4()),
+            matchday: game.matchday,
         };
 
         diesel::insert_into(games::table)
@@ -71,6 +74,7 @@ impl Game {
                 league_id: game.league_id,
                 ident: game.ident,
                 team_id: game.team_id,
+                matchday: game.matchday,
             }).execute(conn)
             .expect("Error updating game!");
 
