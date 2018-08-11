@@ -2,18 +2,36 @@ extern crate diesel;
 extern crate infodium;
 #[macro_use]
 extern crate fake;
+extern crate chrono;
+extern crate uuid;
 
 use diesel::prelude::*;
 use diesel::sql_query;
+
+use uuid::Uuid;
+
+use infodium::models::game::*;
 use infodium::models::league::*;
 use infodium::models::player::*;
 use infodium::models::team::*;
 
+use infodium::schema::games::dsl::*;
 use infodium::schema::leagues::dsl::*;
 use infodium::schema::players::dsl::*;
 use infodium::schema::teams::dsl::*;
 
 use infodium::db::*;
+
+fn gen_game(tid: i32, lid: i32) -> NewGame {
+    NewGame {
+        team_id: tid,
+        league_id: lid,
+        ident: format!("{}", Uuid::new_v4()),
+        result: Some(String::from(fake!(Lorem.word))),
+        venue: String::from(fake!(Lorem.word)),
+        matchday: None,
+    }
+}
 
 fn gen_player() -> NewPlayer {
     NewPlayer {
@@ -51,6 +69,7 @@ fn main() -> Result<(), diesel::result::Error> {
     sql_query("ALTER SEQUENCE leagues_id_seq RESTART WITH 1").execute(&*conn)?;
     sql_query("ALTER SEQUENCE teams_id_seq RESTART WITH 1").execute(&*conn)?;
     sql_query("ALTER SEQUENCE players_id_seq RESTART WITH 1").execute(&*conn)?;
+    sql_query("ALTER SEQUENCE games_id_seq RESTART WITH 1").execute(&*conn)?;
 
     // Clear the database before running seed
     diesel::delete(players)
@@ -62,11 +81,15 @@ fn main() -> Result<(), diesel::result::Error> {
     diesel::delete(leagues)
         .execute(&*conn)
         .expect("Error deleting leagues.");
+    diesel::delete(games)
+        .execute(&*conn)
+        .expect("Error deleting games.");
 
     // Insert new records into db
     let new_players: Vec<NewPlayer> = (0..5).map(|_| gen_player()).collect();
     let new_leagues: Vec<NewLeague> = (0..5).map(|_| gen_league()).collect();
     let new_teams: Vec<NewTeam> = (0..5).map(|_| gen_team(1)).collect();
+    let new_games: Vec<NewGame> = (0..5).map(|_| gen_game(1, 1)).collect();
 
     diesel::insert_into(players)
         .values(&new_players)
@@ -80,6 +103,10 @@ fn main() -> Result<(), diesel::result::Error> {
         .values(&new_teams)
         .execute(&*conn)
         .expect("Error inserting teams!");
+    diesel::insert_into(games)
+        .values(&new_games)
+        .execute(&*conn)
+        .expect("Error inserting games!");
 
     Ok(())
 }
