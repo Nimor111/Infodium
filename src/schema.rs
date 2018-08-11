@@ -1,4 +1,15 @@
 table! {
+    games (id) {
+        id -> Int4,
+        team_id -> Int4,
+        league_id -> Int4,
+        ident -> Text,
+        result -> Nullable<Text>,
+        venue -> Text,
+    }
+}
+
+table! {
     leagues (id) {
         id -> Int4,
         name -> Text,
@@ -30,7 +41,14 @@ table! {
     }
 }
 
+joinable!(games -> leagues (league_id));
+joinable!(games -> teams (team_id));
 joinable!(players -> teams (team_id));
 joinable!(teams -> leagues (league_id));
 
-allow_tables_to_appear_in_same_query!(leagues, players, teams,);
+allow_tables_to_appear_in_same_query!(
+    games,
+    leagues,
+    players,
+    teams,
+);

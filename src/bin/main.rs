@@ -5,6 +5,7 @@ extern crate infodium;
 
 use infodium::db;
 use infodium::rocket;
+use infodium::routes::game_routes;
 use infodium::routes::league_routes;
 use infodium::routes::player_routes;
 use infodium::routes::team_routes;
@@ -35,6 +36,14 @@ fn main() {
                 league_routes::create_league,
                 league_routes::update_league,
                 league_routes::delete_league
+            ],
+        ).mount(
+            "/games",
+            routes![
+                game_routes::get_games,
+                game_routes::create_game,
+                game_routes::update_game,
+                game_routes::delete_game
             ],
         ).launch();
 }

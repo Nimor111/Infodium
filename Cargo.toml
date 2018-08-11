@@ -27,8 +27,9 @@ r2d2 = "*"
 r2d2-diesel = "*"
 dotenv = "*"
 dotenv_codegen = "*"
-chrono = {version = "0.4", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"] }
 fake = "*"
+uuid = { version = "0.6", features = ["v4"] }
 
 [dependencies.rocket_contrib]
 version = "*"
