@@ -7,6 +7,8 @@
 #[macro_use] pub extern crate rocket_contrib;
 #[macro_use] pub extern crate diesel;
 #[macro_use] pub extern crate dotenv_codegen;
+#[macro_use] pub extern crate serde_json;
+pub extern crate frank_jwt;
 extern crate uuid;
 extern crate chrono;
 
@@ -19,3 +21,5 @@ pub mod schema;
 
 pub mod models;
 pub mod routes;
+pub mod guards;
+pub mod utils;
