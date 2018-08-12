@@ -14,13 +14,23 @@ use infodium::models::game::*;
 use infodium::models::league::*;
 use infodium::models::player::*;
 use infodium::models::team::*;
+use infodium::models::user::*;
 
 use infodium::schema::games::dsl::*;
 use infodium::schema::leagues::dsl::*;
 use infodium::schema::players::dsl::*;
 use infodium::schema::teams::dsl::*;
+use infodium::schema::users::dsl::*;
 
 use infodium::db::*;
+
+fn gen_user() -> NewUser {
+    NewUser {
+        username: fake!(Internet.user_name),
+        password: String::from(fake!(Lorem.word)),
+        email: fake!(Internet.free_email),
+    }
+}
 
 fn gen_game(tid: i32, lid: i32) -> NewGame {
     NewGame {
@@ -70,26 +80,31 @@ fn main() -> Result<(), diesel::result::Error> {
     sql_query("ALTER SEQUENCE teams_id_seq RESTART WITH 1").execute(&*conn)?;
     sql_query("ALTER SEQUENCE players_id_seq RESTART WITH 1").execute(&*conn)?;
     sql_query("ALTER SEQUENCE games_id_seq RESTART WITH 1").execute(&*conn)?;
+    sql_query("ALTER SEQUENCE users_id_seq RESTART WITH 1").execute(&*conn)?;
 
     // Clear the database before running seed
     diesel::delete(players)
         .execute(&*conn)
         .expect("Error deleting players.");
+    diesel::delete(games)
+        .execute(&*conn)
+        .expect("Error deleting games.");
     diesel::delete(teams)
         .execute(&*conn)
         .expect("Error deleting teams.");
     diesel::delete(leagues)
         .execute(&*conn)
         .expect("Error deleting leagues.");
-    diesel::delete(games)
+    diesel::delete(users)
         .execute(&*conn)
-        .expect("Error deleting games.");
+        .expect("Error deleting users.");
 
     // Insert new records into db
     let new_players: Vec<NewPlayer> = (0..5).map(|_| gen_player()).collect();
     let new_leagues: Vec<NewLeague> = (0..5).map(|_| gen_league()).collect();
     let new_teams: Vec<NewTeam> = (0..5).map(|_| gen_team(1)).collect();
     let new_games: Vec<NewGame> = (0..5).map(|_| gen_game(1, 1)).collect();
+    let new_users: Vec<NewUser> = (0..5).map(|_| gen_user()).collect();
 
     diesel::insert_into(players)
         .values(&new_players)
@@ -107,6 +122,10 @@ fn main() -> Result<(), diesel::result::Error> {
         .values(&new_games)
         .execute(&*conn)
         .expect("Error inserting games!");
+    diesel::insert_into(users)
+        .values(&new_users)
+        .execute(&*conn)
+        .expect("Error inserting users!");
 
     Ok(())
 }

@@ -8,6 +8,8 @@
 #[macro_use] pub extern crate diesel;
 #[macro_use] pub extern crate dotenv_codegen;
 #[macro_use] pub extern crate serde_json;
+#[macro_use] extern crate validator_derive;
+extern crate validator;
 pub extern crate frank_jwt;
 extern crate uuid;
 extern crate chrono;

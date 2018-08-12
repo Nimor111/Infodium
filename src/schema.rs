@@ -42,6 +42,15 @@ table! {
     }
 }
 
+table! {
+    users (id) {
+        id -> Int4,
+        email -> Text,
+        username -> Text,
+        password -> Text,
+    }
+}
+
 joinable!(games -> leagues (league_id));
 joinable!(games -> teams (team_id));
 joinable!(players -> teams (team_id));
@@ -52,4 +61,5 @@ allow_tables_to_appear_in_same_query!(
     leagues,
     players,
     teams,
+    users,
 );
