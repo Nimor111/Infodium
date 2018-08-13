@@ -46,6 +46,6 @@ fn main() {
                 game_routes::update_game,
                 game_routes::delete_game
             ],
-        ).mount("/auth", routes![auth_routes::register])
+        ).mount("/auth", routes![auth_routes::register, auth_routes::login])
         .launch();
 }
