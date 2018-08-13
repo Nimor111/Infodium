@@ -1,11 +1,7 @@
 use rocket::data::{self, FromData};
 use rocket::http::Status;
 use rocket::Outcome::*;
-use rocket::{Data, Outcome, Request};
-
-use std::mem;
-
-use rocket_contrib::Json;
+use rocket::{Data, Request};
 
 use serde_json::from_reader;
 
@@ -29,11 +25,11 @@ pub struct User {
 }
 
 #[table_name = "users"]
-#[derive(Serialize, Insertable, Deserialize, Validate, Debug)]
+#[derive(Serialize, Deserialize, Insertable, Validate, Clone, Debug)]
 pub struct NewUser {
     pub username: String,
     pub password: String,
-    #[validate(email)]
+    #[validate(email(message = "Email %s is not valid"))]
     pub email: String,
 }
 
@@ -45,7 +41,10 @@ impl FromData for NewUser {
         match from_reader(reader).map(|val: NewUser| val) {
             Ok(value) => match value.validate() {
                 Ok(_) => Success(value),
-                Err(e) => Failure((Status::BadRequest, e.to_string())),
+                Err(e) => Failure((
+                    Status::UnprocessableEntity,
+                    String::from(&*e.inner()["email"][0].clone().message.unwrap()),
+                )),
             },
             Err(e) => Failure((Status::BadRequest, e.to_string())),
         }
@@ -53,10 +52,10 @@ impl FromData for NewUser {
 }
 
 impl User {
-    pub fn create(conn: &PgConnection, mut user: NewUser) -> String {
+    pub fn create(conn: &PgConnection, user: NewUser) -> String {
         let new_user = NewUser {
             username: user.username,
-            email: mem::replace(&mut user.email, String::from("")),
+            email: String::from(&*user.email),
             password: user.password,
         };
 
