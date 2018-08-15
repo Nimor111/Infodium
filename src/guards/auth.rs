@@ -16,7 +16,7 @@ use models::user::{NewUser, User};
 
 use db;
 
-pub struct AuthGuard(pub String);
+pub struct AuthGuard(pub i32);
 
 impl FromData for AuthGuard {
     type Error = String;
@@ -46,7 +46,7 @@ impl FromData for AuthGuard {
                     ));
                 }
 
-                Outcome::Success(AuthGuard(user.username))
+                Outcome::Success(AuthGuard(user.id))
             }
             Err(e) => Outcome::Failure((Status::BadRequest, format!("{:?}", e))),
         }

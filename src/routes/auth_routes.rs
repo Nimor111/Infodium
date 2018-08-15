@@ -25,7 +25,7 @@ pub fn login(
     user: Result<AuthGuard, String>,
 ) -> Result<Json<String>, status::Custom<Json<String>>> {
     match user {
-        Ok(user) => match generate_jwt_token(json!({ "username": user.0 })) {
+        Ok(user) => match generate_jwt_token(json!({ "id": user.0 })) {
             Ok(token) => Ok(Json(token)),
             Err(e) => Err(status::Custom(Status::BadRequest, Json(format!("{:?}", e)))),
         },
