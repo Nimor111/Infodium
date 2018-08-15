@@ -5,6 +5,8 @@ use rocket::{Data, Request};
 
 use serde_json::from_reader;
 
+use bcrypt::hash;
+
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -53,10 +55,11 @@ impl FromData for NewUser {
 
 impl User {
     pub fn create(conn: &PgConnection, user: NewUser) -> String {
+        let hashed_pass = hash(&user.password, 6).expect("Failed to hash!");
         let new_user = NewUser {
             username: user.username,
             email: String::from(&*user.email),
-            password: user.password,
+            password: hashed_pass,
         };
 
         diesel::insert_into(users::table)

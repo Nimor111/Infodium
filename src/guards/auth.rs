@@ -6,6 +6,8 @@ use rocket::Outcome;
 
 use diesel::prelude::*;
 
+use bcrypt::verify;
+
 use serde_json::from_reader;
 
 use schema::users::dsl::*;
@@ -36,8 +38,8 @@ impl FromData for AuthGuard {
                 }
                 let user: User = user.unwrap();
 
-                // TODO don't store passwords in plain text!
-                if user.password != u.password {
+                let valid = verify(&u.password, &user.password).unwrap();
+                if !valid {
                     return Outcome::Failure((
                         Status::Unauthorized,
                         String::from("Wrong credentials!"),
