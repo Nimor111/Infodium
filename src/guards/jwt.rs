@@ -4,7 +4,7 @@ use rocket::Outcome;
 use rocket_contrib::Value;
 use utils::utils::decode_token;
 
-pub struct JwtGuard(Value);
+pub struct JwtGuard;
 
 impl<'a, 'r> FromRequest<'a, 'r> for JwtGuard {
     type Error = ();
@@ -17,7 +17,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for JwtGuard {
 
         let jwt = data[0];
         match decode_token(jwt.to_string()) {
-            Ok(payload) => Outcome::Success(JwtGuard(payload)),
+            Ok(_) => Outcome::Success(JwtGuard),
             Err(_) => Outcome::Failure((Status::Unauthorized, ())),
         }
     }

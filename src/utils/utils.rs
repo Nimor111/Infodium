@@ -12,7 +12,7 @@ pub fn generate_jwt_token(payload: Value) -> Result<String, Error> {
     )
 }
 
-pub fn decode_token(jwt: String) -> Result<Value, Error> {
-    let (_, payload) = decode(&jwt, &SECRET_KEY.to_string(), Algorithm::HS256)?;
-    Ok(payload)
+pub fn decode_token(jwt: String) -> Result<(), Error> {
+    decode(&jwt, &SECRET_KEY.to_string(), Algorithm::HS256)?;
+    Ok(())
 }
