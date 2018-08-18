@@ -9,28 +9,20 @@ extern crate fake;
 #[macro_use]
 extern crate rocket_contrib;
 
-use parking_lot::Mutex;
-
 use rocket::http::{ContentType, Status};
-use rocket::local::Client;
 
 use infodium::models::player::Player;
-use infodium::rocket as startup;
 
-static DB_LOCK: Mutex<()> = Mutex::new(());
+mod common;
 
 speculate! {
     before {
-        let _lock = DB_LOCK.lock();
-        let (rocket, db) = startup("test");
-        let client = Client::new(rocket).expect("Rocket client");
-        #[allow(unused_variables)]
-        let conn = &*db.get().expect("Failed to get db connection for testing!");
+        let (client, conn) = common::setup();
     }
 
     describe "player tests" {
         it "adds a player successfully" {
-            let players = Player::all(conn);
+            let players = Player::all(&conn);
 
             let body = json!({
                 "name": fake!(Name.name),
@@ -45,7 +37,7 @@ speculate! {
                 .body(body)
                 .dispatch();
 
-            let new_players = Player::all(conn);
+            let new_players = Player::all(&conn);
             assert_eq!(response.status(), Status::Ok);
             assert_eq!(new_players.len(), players.len() + 1);
         }
