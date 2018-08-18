@@ -30,6 +30,7 @@ pub struct User {
 #[derive(Serialize, Deserialize, Insertable, Validate, Clone, Debug)]
 pub struct NewUser {
     pub username: String,
+    #[validate(length(min = "6", message = "Password too short!"))]
     pub password: String,
     #[validate(email(message = "Email %s is not valid"))]
     pub email: String,
@@ -43,10 +44,7 @@ impl FromData for NewUser {
         match from_reader(reader).map(|val: NewUser| val) {
             Ok(value) => match value.validate() {
                 Ok(_) => Success(value),
-                Err(e) => Failure((
-                    Status::UnprocessableEntity,
-                    String::from(&*e.inner()["email"][0].clone().message.unwrap()),
-                )),
+                Err(e) => Failure((Status::UnprocessableEntity, format!("{}", e))),
             },
             Err(e) => Failure((Status::BadRequest, e.to_string())),
         }

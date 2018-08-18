@@ -1,10 +1,18 @@
-use db;
-use models::user::{NewUser, User};
 use rocket::http::Status;
 use rocket::response::status;
 use rocket_contrib::Json;
 
-use guards::auth::AuthGuard;
+use diesel::prelude::*;
+
+use bcrypt::verify;
+
+use db;
+
+// use guards::auth::AuthGuard;
+
+use models::user::{NewUser, User};
+
+use schema::users::dsl::*;
 
 use utils::utils::generate_jwt_token;
 
@@ -21,14 +29,35 @@ pub fn register(
 
 #[post("/login", data = "<user>")]
 pub fn login(
-    _conn: db::Connection,
-    user: Result<AuthGuard, String>,
-) -> Result<Json<String>, status::Custom<Json<String>>> {
-    match user {
-        Ok(user) => match generate_jwt_token(json!({ "id": user.0 })) {
-            Ok(token) => Ok(Json(token)),
-            Err(e) => Err(status::Custom(Status::BadRequest, Json(format!("{:?}", e)))),
-        },
-        Err(e) => Err(status::Custom(Status::Unauthorized, Json(e))),
+    conn: db::Connection,
+    user: Json<NewUser>,
+) -> Result<Json<String>, status::Custom<Json<&'static str>>> {
+    let queried_user: Result<User, status::Custom<Json<&str>>> = users
+        .filter(email.eq(user.email.clone()))
+        .select((id, username, password, email))
+        .first(&*conn)
+        .map_err(|_| {
+            return status::Custom(Status::Unauthorized, Json("Wrong credentials!"));
+        });
+
+    let found_user = match queried_user {
+        Ok(u) => u,
+        Err(e) => return Err(e),
+    };
+
+    let valid = verify(&user.password, &found_user.password).unwrap();
+    if !valid {
+        return Err(status::Custom(
+            Status::Unauthorized,
+            Json("Wrong credentials!"),
+        ));
     }
+
+    return match generate_jwt_token(json!({ "id": found_user.id })) {
+        Ok(token) => Ok(Json(token)),
+        Err(_) => Err(status::Custom(
+            Status::BadRequest,
+            Json("Something went wrong!"),
+        )),
+    };
 }

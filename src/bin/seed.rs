@@ -5,24 +5,26 @@ extern crate fake;
 extern crate chrono;
 extern crate uuid;
 
+use std::error;
+
 use diesel::prelude::*;
 use diesel::sql_query;
 
 use uuid::Uuid;
 
-use infodium::models::game::*;
-use infodium::models::league::*;
-use infodium::models::player::*;
-use infodium::models::team::*;
-use infodium::models::user::*;
+use self::infodium::models::game::*;
+use self::infodium::models::league::*;
+use self::infodium::models::player::*;
+use self::infodium::models::team::*;
+use self::infodium::models::user::*;
 
-use infodium::schema::games::dsl::*;
-use infodium::schema::leagues::dsl::*;
-use infodium::schema::players::dsl::*;
-use infodium::schema::teams::dsl::*;
-use infodium::schema::users::dsl::*;
+use self::infodium::schema::games::dsl::*;
+use self::infodium::schema::leagues::dsl::*;
+use self::infodium::schema::players::dsl::*;
+use self::infodium::schema::teams::dsl::*;
+use self::infodium::schema::users::dsl::*;
 
-use infodium::db::*;
+use self::infodium::db::*;
 
 fn gen_user() -> NewUser {
     NewUser {
@@ -73,7 +75,10 @@ fn gen_team(lid: i32) -> NewTeam {
 }
 
 fn main() -> Result<(), diesel::result::Error> {
-    let conn = connect().get().unwrap();
+    let conn = match connect("dev") {
+        Ok(conn) => conn.get().unwrap(),
+        Err(_) => panic!("Unable to connect to db!"),
+    };
 
     // Reset table serial ids
     sql_query("ALTER SEQUENCE leagues_id_seq RESTART WITH 1").execute(&*conn)?;
