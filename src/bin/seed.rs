@@ -5,8 +5,6 @@ extern crate fake;
 extern crate chrono;
 extern crate uuid;
 
-use std::error;
-
 use diesel::prelude::*;
 use diesel::sql_query;
 
@@ -67,7 +65,7 @@ fn gen_team(lid: i32) -> NewTeam {
     NewTeam {
         name: fake!(Name.name),
         tla: String::from(fake!(Lorem.word)),
-        address: Some(String::from(fake!(Address.street_address))),
+        address: Some(fake!(Address.street_address)),
         facebook: Some(String::from(fake!(Lorem.word))),
         website: Some(String::from(fake!(Lorem.word))),
         league_id: lid,
@@ -77,7 +75,7 @@ fn gen_team(lid: i32) -> NewTeam {
 fn main() -> Result<(), diesel::result::Error> {
     let conn = match connect("dev") {
         Ok(conn) => conn.get().unwrap(),
-        Err(_) => panic!("Unable to connect to db!"),
+        Err(_err) => panic!("Unable to connect to db!"),
     };
 
     // Reset table serial ids

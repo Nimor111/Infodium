@@ -8,13 +8,11 @@ use bcrypt::verify;
 
 use db;
 
-// use guards::auth::AuthGuard;
-
 use models::user::{NewUser, User};
 
 use schema::users::dsl::*;
 
-use utils::utils::generate_jwt_token;
+use utils::util::generate_jwt_token;
 
 #[post("/register", data = "<user>")]
 pub fn register(
@@ -36,9 +34,7 @@ pub fn login(
         .filter(email.eq(user.email.clone()))
         .select((id, username, password, email))
         .first(&*conn)
-        .map_err(|_| {
-            return status::Custom(Status::Unauthorized, Json("Wrong credentials!"));
-        });
+        .map_err(|_| status::Custom(Status::Unauthorized, Json("Wrong credentials!")));
 
     let found_user = match queried_user {
         Ok(u) => u,
@@ -53,11 +49,11 @@ pub fn login(
         ));
     }
 
-    return match generate_jwt_token(json!({ "id": found_user.id })) {
+    match generate_jwt_token(json!({ "id": found_user.id })) {
         Ok(token) => Ok(Json(token)),
         Err(_) => Err(status::Custom(
             Status::BadRequest,
             Json("Something went wrong!"),
         )),
-    };
+    }
 }

@@ -3,6 +3,8 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+#![cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
+
 #[macro_use]
 pub extern crate serde_derive;
 #[macro_use]

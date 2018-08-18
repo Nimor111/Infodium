@@ -13,7 +13,7 @@ use diesel::prelude::*;
 
 use schema::users;
 
-use utils::utils::generate_jwt_token;
+use utils::util::generate_jwt_token;
 
 use validator::Validate;
 

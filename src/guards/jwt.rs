@@ -2,7 +2,7 @@ use rocket::http::Status;
 use rocket::request::{self, FromRequest, Request};
 use rocket::Outcome;
 use rocket_contrib::Value;
-use utils::utils::decode_token;
+use utils::util::decode_token;
 
 pub struct JwtGuard;
 
