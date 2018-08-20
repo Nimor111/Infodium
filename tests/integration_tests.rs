@@ -1,6 +1,3 @@
-#![feature(plugin)]
-#![plugin(speculate)]
-
 extern crate infodium;
 extern crate parking_lot;
 extern crate rocket;
@@ -13,14 +10,25 @@ extern crate diesel;
 extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
+extern crate dotenv;
+
+use std::env;
+use std::process::Command;
+
+use dotenv::dotenv;
 
 use diesel::prelude::*;
 
 use rocket::http::{ContentType, Status};
+use rocket::local::Client;
 
 use infodium::db;
 
+#[macro_use]
 mod common;
+
+use common::startup;
+use common::DB_LOCK;
 
 mod schema {
     table! {
@@ -58,68 +66,108 @@ struct NewPlayer {
     nationality: String,
 }
 
-fn gen_player(conn: &db::Connection) -> i32 {
+fn gen_player(conn: &db::Connection) -> Player {
     let new_player = NewPlayer {
         name: fake!(Name.name),
+        team_id: None,
         position: String::from(fake!(Lorem.word)),
         country: String::from(fake!(Lorem.word)),
         nationality: String::from(fake!(Lorem.word)),
-        team_id: None
     };
 
-    let player_id = diesel::insert_into(players)
+    let player_id: Vec<i32> = diesel::insert_into(players)
         .values(&new_player)
         .returning(id)
         .get_results(&**conn)
         .unwrap();
 
-    player_id[0]
+    players::table
+        .find(player_id[0])
+        .first(&**conn)
+        .expect("Failed to fetch player!")
 }
 
 fn get_all_players(conn: &db::Connection) -> Vec<Player> {
-    players.load::<Player>(&**conn).expect("Error loading players!")
+    players
+        .load::<Player>(&**conn)
+        .expect("Error loading players!")
 }
 
 fn delete_player(player_id: i32, conn: &db::Connection) -> usize {
-    diesel::delete(players::table.find(player_id)).execute(&**conn).expect("Error deleting player!")
+    diesel::delete(players::table.find(player_id))
+        .execute(&**conn)
+        .expect("Error deleting player!")
 }
 
-speculate! {
-    before {
-        let (client, conn) = common::setup();
-    }
+fn fetch_player(player_id: i32, conn: &db::Connection) -> Player {
+    players::table
+        .find(player_id)
+        .first(&**conn)
+        .expect("Failed to fetch player!")
+}
 
-    describe "player tests" {
-        it "adds a player successfully" {
-            let player_count = get_all_players(&conn).len();
+#[test]
+fn test_adds_a_player_successfully() {
+    run_test!(|client, conn| {
+        let player_count = get_all_players(&conn).len();
 
-            let body = json!({
+        let body = json!({
                 "name": fake!(Name.name),
                 "position": String::from(fake!(Lorem.word)),
                 "country": String::from(fake!(Lorem.word)),
                 "nationality": String::from(fake!(Lorem.word)),
             }).to_string();
 
+        let response = client
+            .post("/players")
+            .header(ContentType::JSON)
+            .body(body)
+            .dispatch();
 
-            let response = client
-                .post("/players")
-                .header(ContentType::JSON)
-                .body(body)
-                .dispatch();
+        let new_player_count = get_all_players(&conn).len();
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(new_player_count, player_count + 1);
+    })
+}
 
-            let new_player_count = get_all_players(&conn).len();
-            assert_eq!(response.status(), Status::Ok);
-            assert_eq!(new_player_count, player_count + 1);
-        }
+#[test]
+fn test_deletes_a_player_successfully() {
+    run_test!(|client, conn| {
+        let player_id = gen_player(&conn).id;
 
-        it "deletes a player successfully" {
-            let player_id = gen_player(&conn);
+        let player_count = get_all_players(&conn).len();
 
-            let player_count = get_all_players(&conn).len();
-            delete_player(player_id, &conn);
+        let response = client.delete(format!("/players/{}", player_id)).dispatch();
 
-            let new_player_count = get_all_players(&conn).len();
-            assert_eq!(new_player_count, player_count - 1);
-        }
-    }
+        let new_player_count = get_all_players(&conn).len();
+
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(new_player_count, player_count - 1);
+    })
+}
+
+#[test]
+fn test_updates_a_player_successfully() {
+    run_test!(|client, conn| {
+        let player = gen_player(&conn);
+        let new_name = fake!(Name.name);
+
+        let body = json!({
+            "id": player.id,
+            "name": new_name.clone(),
+            "position": player.position,
+            "country": player.country,
+            "nationality": player.nationality,
+        }).to_string();
+
+        let response = client
+            .put(format!("/players/{}", player.id))
+            .header(ContentType::JSON)
+            .body(body)
+            .dispatch();
+        let returned_player = fetch_player(player.id, &conn);
+
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(returned_player.name, new_name);
+    })
 }

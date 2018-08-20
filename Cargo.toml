@@ -43,4 +43,3 @@ features = ["json"]
 [dev-dependencies]
 parking_lot = { version = "0.6", features = ["nightly"] }
 rand = "0.5"
-speculate = "*"
