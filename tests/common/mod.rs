@@ -4,7 +4,7 @@ extern crate infodium;
 extern crate parking_lot;
 extern crate rocket;
 
-use parking_lot::Mutex;
+use self::parking_lot::Mutex;
 
 use rocket::local::Client;
 

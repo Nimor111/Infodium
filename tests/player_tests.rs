@@ -1,5 +1,4 @@
 extern crate infodium;
-extern crate parking_lot;
 extern crate rocket;
 #[macro_use]
 extern crate fake;
@@ -91,12 +90,6 @@ fn get_all_players(conn: &db::Connection) -> Vec<Player> {
     players
         .load::<Player>(&**conn)
         .expect("Error loading players!")
-}
-
-fn delete_player(player_id: i32, conn: &db::Connection) -> usize {
-    diesel::delete(players::table.find(player_id))
-        .execute(&**conn)
-        .expect("Error deleting player!")
 }
 
 fn fetch_player(player_id: i32, conn: &db::Connection) -> Player {
