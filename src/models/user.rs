@@ -12,6 +12,7 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 
 use schema::users;
+use schema::users::dsl::*;
 
 use utils::util::generate_jwt_token;
 
@@ -21,19 +22,19 @@ use validator::Validate;
 #[derive(Serialize, Deserialize, Queryable, AsChangeset, Debug)]
 pub struct User {
     pub id: i32,
+    pub email: String,
     pub username: String,
     pub password: String,
-    pub email: String,
 }
 
 #[table_name = "users"]
 #[derive(Serialize, Deserialize, Insertable, Validate, Clone, Debug)]
 pub struct NewUser {
+    #[validate(email(message = "Email %s is not valid"))]
+    pub email: String,
     pub username: String,
     #[validate(length(min = "6", message = "Password too short!"))]
     pub password: String,
-    #[validate(email(message = "Email %s is not valid"))]
-    pub email: String,
 }
 
 impl FromData for NewUser {
@@ -55,8 +56,8 @@ impl User {
     pub fn create(conn: &PgConnection, user: NewUser) -> String {
         let hashed_pass = hash(&user.password, 6).expect("Failed to hash!");
         let new_user = NewUser {
-            username: user.username,
             email: String::from(&*user.email),
+            username: user.username,
             password: hashed_pass,
         };
 
@@ -65,15 +66,20 @@ impl User {
             .execute(conn)
             .expect("Error creating new user!");
 
-        generate_jwt_token(json!({"email": user.email})).unwrap()
+        let user = users
+            .filter(email.eq(new_user.email))
+            .first::<User>(&*conn)
+            .expect("Error getting user!");
+
+        generate_jwt_token(json!({"id": user.id})).unwrap()
     }
 
     pub fn update(user_id: i32, conn: &PgConnection, user: NewUser) {
         diesel::update(users::table.find(user_id))
             .set(&User {
                 id: user_id,
-                username: user.username,
                 email: user.email,
+                username: user.username,
                 password: user.password,
             }).execute(conn)
             .expect("Error updating user!");

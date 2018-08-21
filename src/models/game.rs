@@ -78,10 +78,7 @@ impl Game {
             }).execute(conn)
             .expect("Error updating game!");
 
-        games::table
-            .find(gid)
-            .first(conn)
-            .expect("Error getting game!")
+        games.find(gid).first(conn).expect("Error getting game!")
     }
 
     pub fn delete(gid: i32, conn: &PgConnection) -> bool {

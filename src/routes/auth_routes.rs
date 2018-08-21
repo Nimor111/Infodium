@@ -32,7 +32,7 @@ pub fn login(
 ) -> Result<Json<String>, status::Custom<Json<&'static str>>> {
     let queried_user: Result<User, status::Custom<Json<&str>>> = users
         .filter(email.eq(user.email.clone()))
-        .select((id, username, password, email))
+        .select((id, email, username, password))
         .first(&*conn)
         .map_err(|_| status::Custom(Status::Unauthorized, Json("Wrong credentials!")));
 
