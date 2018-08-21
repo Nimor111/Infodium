@@ -4,66 +4,23 @@ extern crate rocket;
 extern crate fake;
 #[macro_use]
 extern crate rocket_contrib;
-#[macro_use]
 extern crate diesel;
-extern crate serde_json;
-#[macro_use]
 extern crate serde_derive;
-extern crate dotenv;
+extern crate serde_json;
 
-use std::env;
-use std::process::Command;
+use self::diesel::prelude::*;
 
-use dotenv::dotenv;
+use self::infodium::db;
+use self::infodium::models::player::{NewPlayer, Player};
+use self::infodium::schema::players;
+use self::infodium::schema::players::dsl::*;
 
-use diesel::prelude::*;
-
-use rocket::http::{ContentType, Status};
-use rocket::local::Client;
-
-use infodium::db;
+use self::rocket::http::{ContentType, Status};
 
 #[macro_use]
 mod common;
 
-use common::startup;
 use common::DB_LOCK;
-
-mod schema {
-    table! {
-        players (id) {
-            id -> Int4,
-            team_id -> Nullable<Int4>,
-            name -> Text,
-            position -> Text,
-            country -> Text,
-            nationality -> Text,
-        }
-    }
-}
-
-use schema::players;
-use schema::players::dsl::*;
-
-#[derive(Queryable, PartialEq, Debug)]
-struct Player {
-    id: i32,
-    team_id: Option<i32>,
-    name: String,
-    position: String,
-    country: String,
-    nationality: String,
-}
-
-#[derive(Deserialize, Insertable)]
-#[table_name = "players"]
-struct NewPlayer {
-    name: String,
-    team_id: Option<i32>,
-    position: String,
-    country: String,
-    nationality: String,
-}
 
 fn gen_player(conn: &db::Connection) -> Player {
     let new_player = NewPlayer {

@@ -7,5 +7,5 @@ extern crate infodium;
 use infodium::rocket;
 
 fn main() {
-    rocket("dev").0.launch();
+    rocket().0.launch();
 }

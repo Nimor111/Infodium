@@ -73,7 +73,7 @@ fn gen_team(lid: i32) -> NewTeam {
 }
 
 fn main() -> Result<(), diesel::result::Error> {
-    let conn = match connect("dev") {
+    let conn = match connect() {
         Ok(conn) => conn.get().unwrap(),
         Err(_err) => panic!("Unable to connect to db!"),
     };

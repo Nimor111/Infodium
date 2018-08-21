@@ -10,13 +10,8 @@ use diesel::pg::PgConnection;
 
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-pub fn connect(env: &str) -> Result<Pool, r2d2::Error> {
-    let database_url;
-    if env == "test" {
-        database_url = dotenv!("TEST_DATABASE_URL");
-    } else {
-        database_url = dotenv!("DATABASE_URL")
-    }
+pub fn connect() -> Result<Pool, r2d2::Error> {
+    let database_url = dotenv!("DATABASE_URL");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let pool = r2d2::Pool::builder().build(manager)?;
 

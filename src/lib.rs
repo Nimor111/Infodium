@@ -2,7 +2,6 @@
 #![feature(custom_attribute)]
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
-
 #![cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
 
 #[macro_use]
@@ -38,8 +37,8 @@ pub mod utils;
 
 use rocket::Rocket;
 
-pub fn rocket(env: &str) -> (Rocket, db::Pool) {
-    let db_pool = db::connect(env).unwrap();
+pub fn rocket() -> (Rocket, db::Pool) {
+    let db_pool = db::connect().unwrap();
     let rocket = rocket::ignite()
         .manage(db_pool.clone())
         .mount(
