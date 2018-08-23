@@ -6,9 +6,10 @@ pub static DB_LOCK: Mutex<()> = Mutex::new(());
 
 #[macro_export]
 macro_rules! run_test {
-    (|$client:ident, $conn:ident| $block:expr) => {{
+    (|$client:ident, $conn:ident, $jwt: ident| $block:expr) => {{
         use infodium::db;
         use infodium::rocket as startup;
+        use infodium::utils::util::generate_jwt_token;
         use rocket::local::Client;
 
         let _lock = DB_LOCK.lock();
@@ -18,6 +19,7 @@ macro_rules! run_test {
             db.get()
                 .expect("failed to get database connection for testing"),
         );
+        let $jwt = generate_jwt_token(json!({"id": 1})).expect("Failed to generate jwt!");
         $block
     }};
 }

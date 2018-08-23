@@ -14,7 +14,7 @@ use infodium::db;
 use infodium::models::team::Team;
 use infodium::schema::teams::dsl::*;
 
-use rocket::http::{ContentType, Status};
+use rocket::http::{ContentType, Header, Status};
 
 #[macro_use]
 mod common;
@@ -37,9 +37,8 @@ fn fetch_team(team_id: i32, conn: &db::Connection) -> Team {
 
 #[test]
 fn test_adds_a_team_successfully() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, jwt| {
         let team_count = get_all_teams(&conn).len();
-        // let jwt = generate_jwt_token(json!({"id": 1})).expect("Failed to generate jwt!");
         let league = gen_league(&conn);
 
         let body = json!({
@@ -51,7 +50,7 @@ fn test_adds_a_team_successfully() {
         let response = client
             .post("/teams")
             .header(ContentType::JSON)
-            // .header(Header::new("x-auth", jwt))
+            .header(Header::new("x-auth", jwt))
             .body(body)
             .dispatch();
 
@@ -63,12 +62,15 @@ fn test_adds_a_team_successfully() {
 
 #[test]
 fn test_deletes_a_team_successfully() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, jwt| {
         let team_id = gen_team(&conn).id;
 
         let team_count = get_all_teams(&conn).len();
 
-        let response = client.delete(format!("/teams/{}", team_id)).dispatch();
+        let response = client
+            .delete(format!("/teams/{}", team_id))
+            .header(Header::new("x-auth", jwt))
+            .dispatch();
 
         let new_team_count = get_all_teams(&conn).len();
 
@@ -79,7 +81,7 @@ fn test_deletes_a_team_successfully() {
 
 #[test]
 fn test_updates_a_team_successfully() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, jwt| {
         let team = gen_team(&conn);
         let new_name = fake!(Name.name);
 
@@ -96,6 +98,7 @@ fn test_updates_a_team_successfully() {
         let response = client
             .put(format!("/teams/{}", team.id))
             .header(ContentType::JSON)
+            .header(Header::new("x-auth", jwt))
             .body(body)
             .dispatch();
 

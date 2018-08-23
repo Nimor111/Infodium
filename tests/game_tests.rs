@@ -14,7 +14,7 @@ use infodium::db;
 use infodium::models::game::Game;
 use infodium::schema::games::dsl::*;
 
-use rocket::http::{ContentType, Status};
+use rocket::http::{ContentType, Header, Status};
 
 #[macro_use]
 mod common;
@@ -37,7 +37,7 @@ fn fetch_game(game_id: i32, conn: &db::Connection) -> Game {
 
 #[test]
 fn test_adds_a_game_successfully() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, jwt| {
         let team = gen_team(&conn);
         let league = gen_league(&conn);
         let game_count = get_all_games(&conn).len();
@@ -51,6 +51,7 @@ fn test_adds_a_game_successfully() {
         let response = client
             .post("/games")
             .header(ContentType::JSON)
+            .header(Header::new("x-auth", jwt))
             .body(body)
             .dispatch();
 
@@ -62,12 +63,15 @@ fn test_adds_a_game_successfully() {
 
 #[test]
 fn test_deletes_a_game_successfully() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, jwt| {
         let game_id = gen_game(&conn).id;
 
         let game_count = get_all_games(&conn).len();
 
-        let response = client.delete(format!("/games/{}", game_id)).dispatch();
+        let response = client
+            .delete(format!("/games/{}", game_id))
+            .header(Header::new("x-auth", jwt))
+            .dispatch();
 
         let new_game_count = get_all_games(&conn).len();
 
@@ -78,7 +82,7 @@ fn test_deletes_a_game_successfully() {
 
 #[test]
 fn test_updates_a_game_successfully() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, jwt| {
         let game = gen_game(&conn);
         let new_venue = fake!(Name.name);
 
@@ -91,6 +95,7 @@ fn test_updates_a_game_successfully() {
         let response = client
             .put(format!("/games/{}", game.id))
             .header(ContentType::JSON)
+            .header(Header::new("x-auth", jwt))
             .body(body)
             .dispatch();
         let returned_game = fetch_game(game.id, &conn);

@@ -29,7 +29,7 @@ fn get_all_users(conn: &db::Connection) -> Vec<User> {
 
 #[test]
 fn test_registers_a_user_successfully() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, _jwt| {
         let user_count = get_all_users(&conn).len();
 
         let body = json!({
@@ -53,7 +53,7 @@ fn test_registers_a_user_successfully() {
 
 #[test]
 fn test_login_is_successful_with_valid_credentials() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, _jwt| {
         let user = gen_user(&conn);
 
         let body = json!({
@@ -75,7 +75,7 @@ fn test_login_is_successful_with_valid_credentials() {
 
 #[test]
 fn test_login_is_not_successful_with_invalid_email() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, _jwt| {
         let user = gen_user(&conn);
 
         let body = json!({
@@ -100,7 +100,7 @@ fn test_login_is_not_successful_with_invalid_email() {
 
 #[test]
 fn test_login_is_not_successful_with_invalid_password() {
-    run_test!(|client, conn| {
+    run_test!(|client, conn, _jwt| {
         let user = gen_user(&conn);
 
         let body = json!({
