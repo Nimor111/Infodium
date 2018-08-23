@@ -3,7 +3,7 @@ table! {
         id -> Int4,
         team_id -> Int4,
         league_id -> Int4,
-        ident -> Text,
+        ident -> Nullable<Text>,
         result -> Nullable<Text>,
         venue -> Text,
         matchday -> Nullable<Date>,

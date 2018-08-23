@@ -1,12 +1,20 @@
+#![allow(dead_code)]
+
 extern crate bcrypt;
+extern crate uuid;
+
+use self::uuid::Uuid;
 
 use self::bcrypt::hash;
 
 use infodium::db;
+use infodium::models::game::{Game, NewGame};
 use infodium::models::league::{League, NewLeague};
 use infodium::models::player::{NewPlayer, Player};
 use infodium::models::team::{NewTeam, Team};
 use infodium::models::user::{NewUser, User};
+use infodium::schema::games::dsl::games;
+use infodium::schema::games::dsl::id as gid;
 use infodium::schema::leagues::dsl::id as lid;
 use infodium::schema::leagues::dsl::leagues;
 use infodium::schema::players::dsl::id as pid;
@@ -102,4 +110,29 @@ pub fn gen_team(conn: &db::Connection) -> Team {
         .find(team_id[0])
         .first(&**conn)
         .expect("Failed to fetch team!")
+}
+
+pub fn gen_game(conn: &db::Connection) -> Game {
+    let league_id = gen_league(conn).id;
+    let team_id = gen_team(conn).id;
+
+    let new_game = NewGame {
+        team_id: team_id,
+        league_id: league_id,
+        venue: String::from(fake!(Lorem.word)),
+        ident: Some(format!("{}", Uuid::new_v4())),
+        matchday: None,
+        result: None,
+    };
+
+    let game_id: Vec<i32> = diesel::insert_into(games)
+        .values(&new_game)
+        .returning(gid)
+        .get_results(&**conn)
+        .unwrap();
+
+    games
+        .find(game_id[0])
+        .first(&**conn)
+        .expect("Failed to fetch game!")
 }

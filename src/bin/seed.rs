@@ -36,7 +36,7 @@ fn gen_game(tid: i32, lid: i32) -> NewGame {
     NewGame {
         team_id: tid,
         league_id: lid,
-        ident: format!("{}", Uuid::new_v4()),
+        ident: Some(format!("{}", Uuid::new_v4())),
         result: Some(String::from(fake!(Lorem.word))),
         venue: String::from(fake!(Lorem.word)),
         matchday: None,

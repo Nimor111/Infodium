@@ -20,7 +20,7 @@ pub struct Game {
     pub id: i32,
     pub team_id: i32,
     pub league_id: i32,
-    pub ident: String,
+    pub ident: Option<String>,
     pub result: Option<String>,
     pub venue: String,
     pub matchday: Option<NaiveDate>,
@@ -33,7 +33,7 @@ pub struct Game {
 pub struct NewGame {
     pub team_id: i32,
     pub league_id: i32,
-    pub ident: String,
+    pub ident: Option<String>,
     pub result: Option<String>,
     pub venue: String,
     pub matchday: Option<NaiveDate>,
@@ -50,7 +50,7 @@ impl Game {
             team_id: game.team_id,
             league_id: game.league_id,
             venue: game.venue,
-            ident: format!("{}", Uuid::new_v4()),
+            ident: Some(format!("{}", Uuid::new_v4())),
             matchday: game.matchday,
         };
 

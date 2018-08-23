@@ -11,7 +11,7 @@ extern crate serde_json;
 use self::diesel::prelude::*;
 
 use self::infodium::db;
-use self::infodium::models::player::{NewPlayer, Player};
+use self::infodium::models::player::Player;
 use self::infodium::schema::players;
 use self::infodium::schema::players::dsl::*;
 

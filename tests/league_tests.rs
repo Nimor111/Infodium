@@ -11,7 +11,7 @@ extern crate rocket;
 use diesel::prelude::*;
 
 use infodium::db;
-use infodium::models::league::{League, NewLeague};
+use infodium::models::league::League;
 use infodium::schema::leagues::dsl::*;
 use infodium::utils::util::generate_jwt_token;
 
