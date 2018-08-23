@@ -19,29 +19,11 @@ use self::rocket::http::{ContentType, Status};
 
 #[macro_use]
 mod common;
+mod seed;
 
 use common::DB_LOCK;
 
-fn gen_player(conn: &db::Connection) -> Player {
-    let new_player = NewPlayer {
-        name: fake!(Name.name),
-        team_id: None,
-        position: String::from(fake!(Lorem.word)),
-        country: String::from(fake!(Lorem.word)),
-        nationality: String::from(fake!(Lorem.word)),
-    };
-
-    let player_id: Vec<i32> = diesel::insert_into(players)
-        .values(&new_player)
-        .returning(id)
-        .get_results(&**conn)
-        .unwrap();
-
-    players::table
-        .find(player_id[0])
-        .first(&**conn)
-        .expect("Failed to fetch player!")
-}
+use seed::gen_player;
 
 fn get_all_players(conn: &db::Connection) -> Vec<Player> {
     players

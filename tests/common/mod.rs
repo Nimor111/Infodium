@@ -1,7 +1,4 @@
-extern crate diesel;
-extern crate infodium;
 extern crate parking_lot;
-extern crate rocket;
 
 use self::parking_lot::Mutex;
 
@@ -10,9 +7,9 @@ pub static DB_LOCK: Mutex<()> = Mutex::new(());
 #[macro_export]
 macro_rules! run_test {
     (|$client:ident, $conn:ident| $block:expr) => {{
-        use self::infodium::db;
-        use self::infodium::rocket as startup;
-        use self::rocket::local::Client;
+        use infodium::db;
+        use infodium::rocket as startup;
+        use rocket::local::Client;
 
         let _lock = DB_LOCK.lock();
         let (rocket, db) = startup();

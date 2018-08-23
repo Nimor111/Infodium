@@ -1,45 +1,28 @@
-extern crate infodium;
-extern crate rocket;
-#[macro_use]
-extern crate fake;
 #[macro_use]
 extern crate rocket_contrib;
-extern crate diesel;
 extern crate serde_derive;
 extern crate serde_json;
+#[macro_use]
+pub extern crate fake;
+extern crate diesel;
+extern crate infodium;
+extern crate rocket;
 
-use self::diesel::prelude::*;
+use diesel::prelude::*;
 
-use self::infodium::db;
-use self::infodium::models::league::{League, NewLeague};
-use self::infodium::schema::leagues::dsl::*;
-use self::infodium::utils::util::generate_jwt_token;
+use infodium::db;
+use infodium::models::league::{League, NewLeague};
+use infodium::schema::leagues::dsl::*;
+use infodium::utils::util::generate_jwt_token;
 
-use self::rocket::http::{ContentType, Header, Status};
+use rocket::http::{ContentType, Header, Status};
 
 #[macro_use]
 mod common;
+mod seed;
 
 use common::DB_LOCK;
-
-fn gen_league(conn: &db::Connection) -> League {
-    let new_league = NewLeague {
-        name: fake!(Name.name),
-        country: String::from(fake!(Lorem.word)),
-        current_matchday: None,
-    };
-
-    let league_id: Vec<i32> = diesel::insert_into(leagues)
-        .values(&new_league)
-        .returning(id)
-        .get_results(&**conn)
-        .unwrap();
-
-    leagues
-        .find(league_id[0])
-        .first(&**conn)
-        .expect("Failed to fetch league!")
-}
+use seed::gen_league;
 
 fn get_all_leagues(conn: &db::Connection) -> Vec<League> {
     leagues

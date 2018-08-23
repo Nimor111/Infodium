@@ -4,49 +4,27 @@ extern crate rocket;
 extern crate fake;
 #[macro_use]
 extern crate rocket_contrib;
-extern crate bcrypt;
 extern crate diesel;
 extern crate serde_derive;
 extern crate serde_json;
 
-use self::bcrypt::hash;
+use diesel::prelude::*;
 
-use self::diesel::prelude::*;
+use rocket::http::{ContentType, Status};
 
-use self::rocket::http::{ContentType, Status};
-
-use self::infodium::db;
-use self::infodium::models::user::{NewUser, User};
-use self::infodium::schema::users::dsl::*;
+use infodium::db;
+use infodium::models::user::User;
+use infodium::schema::users::dsl::*;
 
 #[macro_use]
 mod common;
+mod seed;
 
 use common::DB_LOCK;
+use seed::gen_user;
 
 fn get_all_users(conn: &db::Connection) -> Vec<User> {
     users.load::<User>(&**conn).expect("Error loading users!")
-}
-
-fn gen_user(conn: &db::Connection) -> User {
-    let hashed_pass = hash("password123", 6).expect("Failed to hash!");
-
-    let new_user = NewUser {
-        email: fake!(Internet.free_email),
-        username: fake!(Internet.user_name),
-        password: hashed_pass,
-    };
-
-    let user_id: Vec<i32> = diesel::insert_into(users)
-        .values(&new_user)
-        .returning(id)
-        .get_results(&**conn)
-        .unwrap();
-
-    users
-        .find(user_id[0])
-        .first(&**conn)
-        .expect("Failed to fetch user!")
 }
 
 #[test]
