@@ -32,6 +32,7 @@ pub mod schema;
 
 pub mod guards;
 pub mod models;
+pub mod responses;
 pub mod routes;
 pub mod utils;
 

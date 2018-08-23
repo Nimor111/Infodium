@@ -1,12 +1,10 @@
 use db;
 use models::player::{NewPlayer, Player};
 
-use rocket::http::Status;
-use rocket::response::status;
-
 use rocket_contrib::{Json, Value};
 
 use guards::jwt::JwtGuard;
+use responses::auth_response::AuthResponse;
 
 #[get("/")]
 pub fn get_players(conn: db::Connection) -> Json<Value> {
@@ -18,11 +16,11 @@ pub fn create_player(
     conn: db::Connection,
     jwt: Result<JwtGuard, ()>,
     player: Json<NewPlayer>,
-) -> Result<Json<Player>, status::Custom<()>> {
-    match jwt {
-        Ok(_) => Ok(Json(Player::create(&conn, player.into_inner()))),
-        Err(_) => Err(status::Custom(Status::Unauthorized, ())),
-    }
+) -> Result<AuthResponse, AuthResponse> {
+    Ok(AuthResponse::new(
+        jwt,
+        json!(&Player::create(&conn, player.into_inner())),
+    ))
 }
 
 #[put("/<id>", data = "<player>")]
@@ -31,11 +29,11 @@ pub fn update_player(
     conn: db::Connection,
     jwt: Result<JwtGuard, ()>,
     player: Json<Player>,
-) -> Result<Json<Player>, status::Custom<()>> {
-    match jwt {
-        Ok(_) => Ok(Json(Player::update(id, &conn, player.into_inner()))),
-        Err(_) => Err(status::Custom(Status::Unauthorized, ())),
-    }
+) -> Result<AuthResponse, AuthResponse> {
+    Ok(AuthResponse::new(
+        jwt,
+        json!(&Player::update(id, &conn, player.into_inner())),
+    ))
 }
 
 #[delete("/<id>")]
@@ -43,9 +41,9 @@ pub fn delete_player(
     id: i32,
     conn: db::Connection,
     jwt: Result<JwtGuard, ()>,
-) -> Result<Json<Value>, status::Custom<()>> {
-    match jwt {
-        Ok(_) => Ok(Json(json!({ "success": Player::delete(id, &conn) }))),
-        Err(_) => Err(status::Custom(Status::Unauthorized, ())),
-    }
+) -> Result<AuthResponse, AuthResponse> {
+    Ok(AuthResponse::new(
+        jwt,
+        json!({ "success": Player::delete(id, &conn) }),
+    ))
 }

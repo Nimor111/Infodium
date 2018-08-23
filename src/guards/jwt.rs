@@ -4,6 +4,7 @@ use rocket::Outcome;
 
 use utils::util::decode_token;
 
+#[derive(Debug)]
 pub struct JwtGuard;
 
 impl<'a, 'r> FromRequest<'a, 'r> for JwtGuard {
