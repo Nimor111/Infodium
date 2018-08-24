@@ -4,6 +4,8 @@ use rocket::http::{ContentType, Status};
 use rocket::response::{Responder, Response};
 use rocket::Request;
 
+use diesel::result::Error as DieselError;
+
 use rocket_contrib::Value;
 
 use guards::jwt::JwtGuard;
@@ -22,6 +24,12 @@ impl AuthResponse {
             data,
             status,
         }
+    }
+}
+
+impl From<DieselError> for AuthResponse {
+    fn from(_: DieselError) -> Self {
+        AuthResponse::new(Ok(JwtGuard), json!({}), Status::NotFound)
     }
 }
 

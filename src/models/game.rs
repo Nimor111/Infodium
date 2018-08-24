@@ -65,7 +65,11 @@ impl Game {
             .expect("Error loading games!")
     }
 
-    pub fn update(gid: i32, conn: &PgConnection, game: NewGame) -> Game {
+    pub fn update(
+        gid: i32,
+        conn: &PgConnection,
+        game: NewGame,
+    ) -> Result<Game, diesel::result::Error> {
         diesel::update(games::table.find(gid))
             .set(&Game {
                 id: gid,
@@ -75,13 +79,14 @@ impl Game {
                 ident: game.ident,
                 team_id: game.team_id,
                 matchday: game.matchday,
-            }).execute(conn)
-            .expect("Error updating game!");
+            }).execute(conn)?;
 
-        games.find(gid).first(conn).expect("Error getting game!")
+        Ok(games.find(gid).first(conn)?)
     }
 
-    pub fn delete(gid: i32, conn: &PgConnection) -> bool {
-        diesel::delete(games::table.find(gid)).execute(conn).is_ok()
+    pub fn delete(gid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        diesel::delete(games::table.find(gid)).execute(conn)?;
+
+        Ok(())
     }
 }

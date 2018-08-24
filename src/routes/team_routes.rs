@@ -35,7 +35,7 @@ pub fn update_team(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!(&Team::update(id, &conn, team.into_inner())),
+        json!(&Team::update(id, &conn, team.into_inner())?),
         Status::Ok,
     ))
 }
@@ -48,7 +48,7 @@ pub fn delete_team(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!({ "success": Team::delete(id, &conn) }),
-        Status::Ok,
+        json!(&Team::delete(id, &conn)?),
+        Status::NoContent,
     ))
 }

@@ -49,25 +49,25 @@ impl League {
             .expect("Error loading leagues!")
     }
 
-    pub fn update(league_id: i32, conn: &PgConnection, league: NewLeague) -> League {
+    pub fn update(
+        league_id: i32,
+        conn: &PgConnection,
+        league: NewLeague,
+    ) -> Result<League, diesel::result::Error> {
         diesel::update(leagues::table.find(league_id))
             .set(&League {
                 id: league_id,
                 name: league.name,
                 country: league.country,
                 current_matchday: league.current_matchday,
-            }).execute(conn)
-            .expect("Error updating league!");
+            }).execute(conn)?;
 
-        leagues::table
-            .find(league_id)
-            .first(conn)
-            .expect("Error getting league!")
+        Ok(leagues.find(league_id).first(conn)?)
     }
 
-    pub fn delete(league_id: i32, conn: &PgConnection) -> bool {
-        diesel::delete(leagues::table.find(league_id))
-            .execute(conn)
-            .is_ok()
+    pub fn delete(league_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        diesel::delete(leagues::table.find(league_id)).execute(conn)?;
+
+        Ok(())
     }
 }

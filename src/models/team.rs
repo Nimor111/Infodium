@@ -58,7 +58,11 @@ impl Team {
             .expect("Error loading teams!")
     }
 
-    pub fn update(team_id: i32, conn: &PgConnection, team: NewTeam) -> Team {
+    pub fn update(
+        team_id: i32,
+        conn: &PgConnection,
+        team: NewTeam,
+    ) -> Result<Team, diesel::result::Error> {
         diesel::update(teams::table.find(team_id))
             .set(&Team {
                 id: team_id,
@@ -68,18 +72,14 @@ impl Team {
                 website: team.website,
                 facebook: team.facebook,
                 league_id: team.league_id,
-            }).execute(conn)
-            .expect("Error updating team!");
+            }).execute(conn)?;
 
-        teams::table
-            .find(team_id)
-            .first(conn)
-            .expect("Error getting team!")
+        Ok(teams.find(team_id).first(conn)?)
     }
 
-    pub fn delete(team_id: i32, conn: &PgConnection) -> bool {
-        diesel::delete(teams::table.find(team_id))
-            .execute(conn)
-            .is_ok()
+    pub fn delete(team_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        diesel::delete(teams::table.find(team_id)).execute(conn)?;
+
+        Ok(())
     }
 }

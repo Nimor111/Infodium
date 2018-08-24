@@ -36,7 +36,7 @@ pub fn update_game(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!(&Game::update(id, &conn, game.into_inner())),
+        json!(&Game::update(id, &conn, game.into_inner())?),
         Status::Ok,
     ))
 }
@@ -49,7 +49,7 @@ pub fn delete_game(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!({ "success": Game::delete(id, &conn) }),
-        Status::Ok,
+        json!(&Game::delete(id, &conn)?),
+        Status::NoContent,
     ))
 }

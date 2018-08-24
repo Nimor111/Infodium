@@ -35,7 +35,7 @@ pub fn update_league(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!(&League::update(id, &conn, league.into_inner())),
+        json!(&League::update(id, &conn, league.into_inner())?),
         Status::Ok,
     ))
 }
@@ -48,7 +48,7 @@ pub fn delete_league(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!({ "success": League::delete(id, &conn) }),
-        Status::Ok,
+        json!(&League::delete(id, &conn)?),
+        Status::NoContent,
     ))
 }

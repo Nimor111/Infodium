@@ -35,7 +35,7 @@ pub fn update_player(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!(&Player::update(id, &conn, player.into_inner())),
+        json!(&Player::update(id, &conn, player.into_inner())?),
         Status::Ok,
     ))
 }
@@ -48,7 +48,7 @@ pub fn delete_player(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!({ "success": Player::delete(id, &conn) }),
-        Status::Ok,
+        json!(&Player::delete(id, &conn)?),
+        Status::NoContent,
     ))
 }

@@ -74,7 +74,7 @@ fn test_deletes_a_team_successfully() {
 
         let new_team_count = get_all_teams(&conn).len();
 
-        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.status(), Status::NoContent);
         assert_eq!(new_team_count, team_count - 1);
     })
 }

@@ -73,7 +73,7 @@ fn test_deletes_a_league_successfully() {
 
         let new_league_count = get_all_leagues(&conn).len();
 
-        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.status(), Status::NoContent);
         assert_eq!(new_league_count, league_count - 1);
     })
 }

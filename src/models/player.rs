@@ -57,21 +57,21 @@ impl Player {
             .expect("Error loading players!")
     }
 
-    pub fn update(player_id: i32, conn: &PgConnection, player: Player) -> Player {
+    pub fn update(
+        player_id: i32,
+        conn: &PgConnection,
+        player: Player,
+    ) -> Result<Player, diesel::result::Error> {
         diesel::update(players::table.find(player_id))
             .set(&player)
-            .execute(conn)
-            .expect("Error updating player!");
+            .execute(conn)?;
 
-        players::table
-            .find(player_id)
-            .first(conn)
-            .expect("Error getting player")
+        Ok(players.find(player_id).first(conn)?)
     }
 
-    pub fn delete(player_id: i32, conn: &PgConnection) -> bool {
-        diesel::delete(players::table.find(player_id))
-            .execute(conn)
-            .is_ok()
+    pub fn delete(player_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        diesel::delete(players::table.find(player_id)).execute(conn)?;
+
+        Ok(())
     }
 }
