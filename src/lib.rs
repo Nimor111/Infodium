@@ -21,6 +21,7 @@ extern crate validator;
 #[macro_use]
 extern crate validator_derive;
 extern crate chrono;
+extern crate rocket_cors;
 extern crate uuid;
 
 pub extern crate r2d2;
@@ -28,6 +29,7 @@ pub extern crate r2d2_diesel;
 pub extern crate rocket;
 
 pub mod db;
+pub mod handlers;
 pub mod schema;
 
 pub mod guards;
@@ -36,9 +38,25 @@ pub mod responses;
 pub mod routes;
 pub mod utils;
 
+use rocket::http::Method;
 use rocket::Rocket;
 
+use rocket_cors::{AllowedHeaders, AllowedOrigins};
+
 pub fn rocket() -> (Rocket, db::Pool) {
+    let (allowed_origins, _) = AllowedOrigins::some(&["http://localhost:3000"]);
+
+    let options = rocket_cors::Cors {
+        allowed_origins: allowed_origins,
+        allowed_methods: vec![Method::Get, Method::Post, Method::Put, Method::Delete]
+            .into_iter()
+            .map(From::from)
+            .collect(),
+        allowed_headers: AllowedHeaders::some(&["Authorization", "Accept"]),
+        allow_credentials: true,
+        ..Default::default()
+    };
+
     let db_pool = db::connect().unwrap();
     let rocket = rocket::ignite()
         .manage(db_pool.clone())
@@ -77,7 +95,8 @@ pub fn rocket() -> (Rocket, db::Pool) {
         ).mount(
             "/auth",
             routes![routes::auth_routes::register, routes::auth_routes::login],
-        );
+        ).attach(options)
+        .catch(catchers![handlers::unauthorized_handler]);
 
     (rocket, db_pool)
 }

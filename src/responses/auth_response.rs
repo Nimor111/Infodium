@@ -29,7 +29,11 @@ impl AuthResponse {
 
 impl From<DieselError> for AuthResponse {
     fn from(_: DieselError) -> Self {
-        AuthResponse::new(Ok(JwtGuard), json!({}), Status::NotFound)
+        AuthResponse::new(
+            Ok(JwtGuard),
+            json!({"error": "Not found!"}),
+            Status::NotFound,
+        )
     }
 }
 

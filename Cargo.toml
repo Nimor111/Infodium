@@ -33,6 +33,7 @@ uuid = { version = "0.6", features = ["v4"] }
 validator = "*"
 validator_derive = "*"
 bcrypt = "0.2"
+rocket_cors = "0.3.0"
 
 [dependencies.rocket_contrib]
 version = "*"
