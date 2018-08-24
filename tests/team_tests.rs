@@ -55,7 +55,7 @@ fn test_adds_a_team_successfully() {
             .dispatch();
 
         let new_team_count = get_all_teams(&conn).len();
-        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.status(), Status::Created);
         assert_eq!(new_team_count, team_count + 1);
     })
 }

@@ -54,7 +54,7 @@ fn test_adds_a_league_successfully() {
             .dispatch();
 
         let new_league_count = get_all_leagues(&conn).len();
-        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.status(), Status::Created);
         assert_eq!(new_league_count, league_count + 1);
     })
 }

@@ -3,6 +3,8 @@ use models::player::{NewPlayer, Player};
 
 use rocket_contrib::{Json, Value};
 
+use rocket::http::Status;
+
 use guards::jwt::JwtGuard;
 use responses::auth_response::AuthResponse;
 
@@ -20,6 +22,7 @@ pub fn create_player(
     Ok(AuthResponse::new(
         jwt,
         json!(&Player::create(&conn, player.into_inner())),
+        Status::Created,
     ))
 }
 
@@ -33,6 +36,7 @@ pub fn update_player(
     Ok(AuthResponse::new(
         jwt,
         json!(&Player::update(id, &conn, player.into_inner())),
+        Status::Ok,
     ))
 }
 
@@ -45,5 +49,6 @@ pub fn delete_player(
     Ok(AuthResponse::new(
         jwt,
         json!({ "success": Player::delete(id, &conn) }),
+        Status::Ok,
     ))
 }

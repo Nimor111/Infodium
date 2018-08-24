@@ -2,6 +2,8 @@ use db;
 
 use rocket_contrib::{Json, Value};
 
+use rocket::http::Status;
+
 use models::game::{Game, NewGame};
 
 use guards::jwt::JwtGuard;
@@ -21,6 +23,7 @@ pub fn create_game(
     Ok(AuthResponse::new(
         jwt,
         json!(&Game::create(&conn, game.into_inner())),
+        Status::Created,
     ))
 }
 
@@ -34,6 +37,7 @@ pub fn update_game(
     Ok(AuthResponse::new(
         jwt,
         json!(&Game::update(id, &conn, game.into_inner())),
+        Status::Ok,
     ))
 }
 
@@ -46,5 +50,6 @@ pub fn delete_game(
     Ok(AuthResponse::new(
         jwt,
         json!({ "success": Game::delete(id, &conn) }),
+        Status::Ok,
     ))
 }

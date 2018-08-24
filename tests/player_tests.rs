@@ -58,7 +58,7 @@ fn test_adds_a_player_successfully() {
             .dispatch();
 
         let new_player_count = get_all_players(&conn).len();
-        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.status(), Status::Created);
         assert_eq!(new_player_count, player_count + 1);
     })
 }

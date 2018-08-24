@@ -56,7 +56,7 @@ fn test_adds_a_game_successfully() {
             .dispatch();
 
         let new_game_count = get_all_games(&conn).len();
-        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.status(), Status::Created);
         assert_eq!(new_game_count, game_count + 1);
     })
 }

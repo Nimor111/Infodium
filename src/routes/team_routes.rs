@@ -3,6 +3,8 @@ use models::team::{NewTeam, Team};
 
 use rocket_contrib::{Json, Value};
 
+use rocket::http::Status;
+
 use guards::jwt::JwtGuard;
 use responses::auth_response::AuthResponse;
 
@@ -20,6 +22,7 @@ pub fn create_team(
     Ok(AuthResponse::new(
         jwt,
         json!(&Team::create(&conn, team.into_inner())),
+        Status::Created,
     ))
 }
 
@@ -33,6 +36,7 @@ pub fn update_team(
     Ok(AuthResponse::new(
         jwt,
         json!(&Team::update(id, &conn, team.into_inner())),
+        Status::Ok,
     ))
 }
 
@@ -45,5 +49,6 @@ pub fn delete_team(
     Ok(AuthResponse::new(
         jwt,
         json!({ "success": Team::delete(id, &conn) }),
+        Status::Ok,
     ))
 }

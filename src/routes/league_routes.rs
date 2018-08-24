@@ -1,5 +1,7 @@
 use rocket_contrib::{Json, Value};
 
+use rocket::http::Status;
+
 use db;
 use models::league::{League, NewLeague};
 
@@ -15,6 +17,7 @@ pub fn create_league(
     Ok(AuthResponse::new(
         jwt,
         json!(&League::create(&conn, league.into_inner())),
+        Status::Created,
     ))
 }
 
@@ -33,6 +36,7 @@ pub fn update_league(
     Ok(AuthResponse::new(
         jwt,
         json!(&League::update(id, &conn, league.into_inner())),
+        Status::Ok,
     ))
 }
 
@@ -45,5 +49,6 @@ pub fn delete_league(
     Ok(AuthResponse::new(
         jwt,
         json!({ "success": League::delete(id, &conn) }),
+        Status::Ok,
     ))
 }
