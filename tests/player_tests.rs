@@ -66,7 +66,7 @@ fn test_adds_a_player_successfully() {
 #[test]
 fn test_deletes_a_player_successfully() {
     run_test!(|client, conn, jwt| {
-        let player_id = gen_player(&conn).id;
+        let player_id = gen_player(&conn, None).id;
 
         let player_count = get_all_players(&conn).len();
 
@@ -85,7 +85,7 @@ fn test_deletes_a_player_successfully() {
 #[test]
 fn test_updates_a_player_successfully() {
     run_test!(|client, conn, jwt| {
-        let player = gen_player(&conn);
+        let player = gen_player(&conn, None);
         let new_name = fake!(Name.name);
 
         let body = json!({

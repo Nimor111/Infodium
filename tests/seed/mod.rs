@@ -45,10 +45,10 @@ pub fn gen_league(conn: &db::Connection) -> League {
         .expect("Failed to fetch league!")
 }
 
-pub fn gen_player(conn: &db::Connection) -> Player {
+pub fn gen_player(conn: &db::Connection, team_id: Option<i32>) -> Player {
     let new_player = NewPlayer {
         name: fake!(Name.name),
-        team_id: None,
+        team_id: team_id,
         position: String::from(fake!(Lorem.word)),
         country: String::from(fake!(Lorem.word)),
         nationality: String::from(fake!(Lorem.word)),

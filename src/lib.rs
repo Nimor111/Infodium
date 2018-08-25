@@ -74,7 +74,8 @@ pub fn rocket() -> (Rocket, db::Pool) {
                 routes::team_routes::get_teams,
                 routes::team_routes::create_team,
                 routes::team_routes::update_team,
-                routes::team_routes::delete_team
+                routes::team_routes::delete_team,
+                routes::team_routes::get_team_players
             ],
         ).mount(
             "/leagues",

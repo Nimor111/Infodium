@@ -2,10 +2,12 @@ use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 
+use schema::players;
 use schema::teams;
 use schema::teams::dsl::*;
 
 use models::league::League;
+use models::player::Player;
 
 #[table_name = "teams"]
 #[belongs_to(League)]
@@ -81,5 +83,24 @@ impl Team {
         diesel::delete(teams::table.find(team_id)).execute(conn)?;
 
         Ok(())
+    }
+
+    pub fn get_team_players(
+        tid: i32,
+        conn: &PgConnection,
+    ) -> Result<Vec<Player>, diesel::result::Error> {
+        let team_players = teams
+            .inner_join(players::dsl::players)
+            .filter(players::dsl::team_id.eq(tid))
+            .select((
+                players::dsl::id,
+                players::dsl::team_id,
+                players::dsl::name,
+                players::dsl::position,
+                players::dsl::country,
+                players::dsl::nationality,
+            )).load(conn)?;
+
+        Ok(team_players)
     }
 }

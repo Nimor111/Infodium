@@ -11,10 +11,13 @@ extern crate fake;
 use diesel::prelude::*;
 
 use infodium::db;
+use infodium::models::player::Player;
 use infodium::models::team::Team;
 use infodium::schema::teams::dsl::*;
 
 use rocket::http::{ContentType, Header, Status};
+
+use serde_json::from_str;
 
 #[macro_use]
 mod common;
@@ -22,7 +25,7 @@ mod seed;
 
 use common::DB_LOCK;
 
-use seed::{gen_league, gen_team};
+use seed::{gen_league, gen_player, gen_team};
 
 fn get_all_teams(conn: &db::Connection) -> Vec<Team> {
     teams.load::<Team>(&**conn).expect("Error loading teams!")
@@ -106,5 +109,22 @@ fn test_updates_a_team_successfully() {
 
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(returned_team.name, new_name);
+    })
+}
+
+#[test]
+fn test_fetches_team_players_successfully() {
+    run_test!(|client, conn, _jwt| {
+        let team = gen_team(&conn, None);
+        let _players = (0..2)
+            .map(|_| gen_player(&conn, Some(team.id)))
+            .collect::<Vec<Player>>();
+
+        let mut response = client.get(format!("/teams/{}/players", team.id)).dispatch();
+
+        assert_eq!(response.status(), Status::Ok);
+
+        let body = response.body_string().unwrap();
+        assert_eq!(from_str::<Vec<Player>>(&body).unwrap().len(), 2);
     })
 }

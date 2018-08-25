@@ -13,6 +13,15 @@ pub fn get_teams(conn: db::Connection) -> Json<Value> {
     Json(json!(Team::all(&conn)))
 }
 
+#[get("/<id>/players")]
+pub fn get_team_players(conn: db::Connection, id: i32) -> Result<AuthResponse, AuthResponse> {
+    Ok(AuthResponse::new(
+        Ok(JwtGuard),
+        json!(&Team::get_team_players(id, &conn)?),
+        Status::Ok,
+    ))
+}
+
 #[post("/", data = "<team>")]
 pub fn create_team(
     conn: db::Connection,
