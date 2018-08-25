@@ -6,6 +6,9 @@ use chrono::NaiveDate;
 
 use schema::leagues;
 use schema::leagues::dsl::*;
+use schema::teams;
+
+use models::team::Team;
 
 #[table_name = "leagues"]
 #[derive(Serialize, Deserialize, Queryable, AsChangeset, Debug)]
@@ -50,24 +53,44 @@ impl League {
     }
 
     pub fn update(
-        league_id: i32,
+        lid: i32,
         conn: &PgConnection,
         league: NewLeague,
     ) -> Result<League, diesel::result::Error> {
-        diesel::update(leagues::table.find(league_id))
+        diesel::update(leagues.find(lid))
             .set(&League {
-                id: league_id,
+                id: lid,
                 name: league.name,
                 country: league.country,
                 current_matchday: league.current_matchday,
             }).execute(conn)?;
 
-        Ok(leagues.find(league_id).first(conn)?)
+        Ok(leagues.find(lid).first(conn)?)
     }
 
-    pub fn delete(league_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
-        diesel::delete(leagues::table.find(league_id)).execute(conn)?;
+    pub fn delete(lid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        diesel::delete(leagues.find(lid)).execute(conn)?;
 
         Ok(())
+    }
+
+    pub fn get_league_teams(
+        lid: i32,
+        conn: &PgConnection,
+    ) -> Result<Vec<Team>, diesel::result::Error> {
+        let league_teams = leagues
+            .inner_join(teams::dsl::teams)
+            .filter(teams::dsl::league_id.eq(lid))
+            .select((
+                teams::dsl::id,
+                teams::dsl::league_id,
+                teams::dsl::name,
+                teams::dsl::tla,
+                teams::dsl::address,
+                teams::dsl::website,
+                teams::dsl::facebook,
+            )).load(conn)?;
+
+        Ok(league_teams)
     }
 }

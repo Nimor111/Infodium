@@ -26,6 +26,15 @@ pub fn get_leagues(conn: db::Connection) -> Json<Value> {
     Json(json!(League::all(&conn)))
 }
 
+#[get("/<id>/teams")]
+pub fn get_league_teams(conn: db::Connection, id: i32) -> Result<AuthResponse, AuthResponse> {
+    Ok(AuthResponse::new(
+        Ok(JwtGuard),
+        json!(&League::get_league_teams(id, &conn)?),
+        Status::Ok,
+    ))
+}
+
 #[put("/<id>", data = "<league>")]
 pub fn update_league(
     id: i32,

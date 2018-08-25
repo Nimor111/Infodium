@@ -26,7 +26,6 @@ use infodium::schema::users::dsl::users;
 
 use diesel;
 use diesel::prelude::*;
-
 pub fn gen_league(conn: &db::Connection) -> League {
     let new_league = NewLeague {
         name: fake!(Name.name),
@@ -88,8 +87,11 @@ pub fn gen_user(conn: &db::Connection) -> User {
         .expect("Failed to fetch user!")
 }
 
-pub fn gen_team(conn: &db::Connection) -> Team {
-    let league_id = gen_league(conn).id;
+pub fn gen_team(conn: &db::Connection, league_id: Option<i32>) -> Team {
+    let league_id = match league_id {
+        Some(i) => i,
+        None => gen_league(conn).id,
+    };
 
     let new_team = NewTeam {
         league_id: league_id,
@@ -114,7 +116,7 @@ pub fn gen_team(conn: &db::Connection) -> Team {
 
 pub fn gen_game(conn: &db::Connection) -> Game {
     let league_id = gen_league(conn).id;
-    let team_id = gen_team(conn).id;
+    let team_id = gen_team(conn, None).id;
 
     let new_game = NewGame {
         team_id: team_id,

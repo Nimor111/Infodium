@@ -63,7 +63,7 @@ fn test_adds_a_team_successfully() {
 #[test]
 fn test_deletes_a_team_successfully() {
     run_test!(|client, conn, jwt| {
-        let team_id = gen_team(&conn).id;
+        let team_id = gen_team(&conn, None).id;
 
         let team_count = get_all_teams(&conn).len();
 
@@ -82,7 +82,7 @@ fn test_deletes_a_team_successfully() {
 #[test]
 fn test_updates_a_team_successfully() {
     run_test!(|client, conn, jwt| {
-        let team = gen_team(&conn);
+        let team = gen_team(&conn, None);
         let new_name = fake!(Name.name);
 
         let body = json!({

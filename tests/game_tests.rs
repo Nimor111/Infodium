@@ -38,7 +38,7 @@ fn fetch_game(game_id: i32, conn: &db::Connection) -> Game {
 #[test]
 fn test_adds_a_game_successfully() {
     run_test!(|client, conn, jwt| {
-        let team = gen_team(&conn);
+        let team = gen_team(&conn, None);
         let league = gen_league(&conn);
         let game_count = get_all_games(&conn).len();
 

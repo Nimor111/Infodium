@@ -12,16 +12,19 @@ use diesel::prelude::*;
 
 use infodium::db;
 use infodium::models::league::League;
+use infodium::models::team::Team;
 use infodium::schema::leagues::dsl::*;
 
 use rocket::http::{ContentType, Header, Status};
+
+use serde_json::from_str;
 
 #[macro_use]
 mod common;
 mod seed;
 
 use common::DB_LOCK;
-use seed::gen_league;
+use seed::{gen_league, gen_team};
 
 fn get_all_leagues(conn: &db::Connection) -> Vec<League> {
     leagues
@@ -102,5 +105,24 @@ fn test_updates_a_league_successfully() {
 
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(returned_league.name, new_name);
+    })
+}
+
+#[test]
+fn test_fetches_league_teams_successfully() {
+    run_test!(|client, conn, _jwt| {
+        let league = gen_league(&conn);
+        let _teams = (0..2)
+            .map(|_| gen_team(&conn, Some(league.id)))
+            .collect::<Vec<Team>>();
+
+        let mut response = client
+            .get(format!("/leagues/{}/teams", league.id))
+            .dispatch();
+
+        assert_eq!(response.status(), Status::Ok);
+
+        let body = response.body_string().unwrap();
+        assert_eq!(from_str::<Vec<Team>>(&body).unwrap().len(), 2);
     })
 }
