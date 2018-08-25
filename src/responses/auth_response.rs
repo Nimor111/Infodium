@@ -43,6 +43,10 @@ impl<'r> Responder<'r> for AuthResponse {
         let data = self.data;
         let status = self.status;
 
+        if status == Status::NotFound {
+            return Err(Status::NotFound);
+        }
+
         match token {
             Ok(_) => Response::build()
                 .status(status)

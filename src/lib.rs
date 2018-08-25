@@ -96,7 +96,10 @@ pub fn rocket() -> (Rocket, db::Pool) {
             "/auth",
             routes![routes::auth_routes::register, routes::auth_routes::login],
         ).attach(options)
-        .catch(catchers![handlers::unauthorized_handler]);
+        .catch(catchers![
+            handlers::unauthorized_handler,
+            handlers::not_found_handler
+        ]);
 
     (rocket, db_pool)
 }
