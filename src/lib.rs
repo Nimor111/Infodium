@@ -48,8 +48,6 @@ use rocket::Rocket;
 use rocket_cors::{AllowedHeaders, AllowedOrigins};
 
 pub fn rocket() -> (Rocket, db::Pool) {
-    logger::setup_logger().unwrap();
-
     let (allowed_origins, _) = AllowedOrigins::some(&["http://localhost:3000"]);
 
     let options = rocket_cors::Cors {

@@ -24,7 +24,10 @@ impl From<DieselError> for ApiResponse {
     fn from(err: DieselError) -> Self {
         match err {
             DieselError::NotFound => ApiResponse::new(None, Status::NotFound),
-            _ => ApiResponse::new(None, Status::InternalServerError),
+            _ => {
+                error!("{}", err);
+                ApiResponse::new(None, Status::InternalServerError)
+            }
         }
     }
 }
