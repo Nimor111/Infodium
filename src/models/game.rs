@@ -40,11 +40,13 @@ pub struct NewGame {
 }
 
 impl Game {
-    pub fn all(conn: &PgConnection) -> Vec<Game> {
-        games.load::<Game>(conn).expect("Error loading games!")
+    pub fn all(conn: &PgConnection) -> Result<Vec<Game>, diesel::result::Error> {
+        let all_games = games.load::<Game>(conn)?;
+
+        Ok(all_games)
     }
 
-    pub fn create(conn: &PgConnection, game: NewGame) -> Game {
+    pub fn create(conn: &PgConnection, game: NewGame) -> Result<Game, diesel::result::Error> {
         let new_game = NewGame {
             result: game.result,
             team_id: game.team_id,
@@ -54,15 +56,9 @@ impl Game {
             matchday: game.matchday,
         };
 
-        diesel::insert_into(games::table)
-            .values(&new_game)
-            .execute(conn)
-            .expect("Error creating new game!");
+        diesel::insert_into(games).values(&new_game).execute(conn)?;
 
-        games::table
-            .order(games::id.desc())
-            .first(conn)
-            .expect("Error loading games!")
+        Ok(games.order(id.desc()).first(conn)?)
     }
 
     pub fn update(

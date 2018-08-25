@@ -1,17 +1,22 @@
 use db;
 
-use rocket_contrib::{Json, Value};
+use rocket_contrib::Json;
 
 use rocket::http::Status;
 
 use models::game::{Game, NewGame};
 
 use guards::jwt::JwtGuard;
+
+use responses::api_response::ApiResponse;
 use responses::auth_response::AuthResponse;
 
 #[get("/")]
-pub fn get_games(conn: db::Connection) -> Json<Value> {
-    Json(json!(Game::all(&conn)))
+pub fn get_games(conn: db::Connection) -> Result<ApiResponse, ApiResponse> {
+    Ok(ApiResponse::new(
+        Some(json!(&Game::all(&conn)?)),
+        Status::Ok,
+    ))
 }
 
 #[post("/", data = "<game>")]
@@ -22,7 +27,7 @@ pub fn create_game(
 ) -> Result<AuthResponse, AuthResponse> {
     Ok(AuthResponse::new(
         jwt,
-        json!(&Game::create(&conn, game.into_inner())),
+        json!(&Game::create(&conn, game.into_inner())?),
         Status::Created,
     ))
 }

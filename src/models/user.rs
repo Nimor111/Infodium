@@ -53,7 +53,7 @@ impl FromData for NewUser {
 }
 
 impl User {
-    pub fn create(conn: &PgConnection, user: NewUser) -> String {
+    pub fn create(conn: &PgConnection, user: NewUser) -> Result<String, diesel::result::Error> {
         let hashed_pass = hash(&user.password, 6).expect("Failed to hash!");
         let new_user = NewUser {
             email: String::from(&*user.email),
@@ -63,31 +63,34 @@ impl User {
 
         diesel::insert_into(users::table)
             .values(&new_user)
-            .execute(conn)
-            .expect("Error creating new user!");
+            .execute(conn)?;
 
         let user = users
             .filter(email.eq(new_user.email))
-            .first::<User>(&*conn)
-            .expect("Error getting user!");
+            .first::<User>(&*conn)?;
 
-        generate_jwt_token(json!({"id": user.id})).unwrap()
+        Ok(generate_jwt_token(json!({"id": user.id})).unwrap())
     }
 
-    pub fn update(user_id: i32, conn: &PgConnection, user: NewUser) {
-        diesel::update(users::table.find(user_id))
+    pub fn update(
+        user_id: i32,
+        conn: &PgConnection,
+        user: NewUser,
+    ) -> Result<(), diesel::result::Error> {
+        diesel::update(users.find(user_id))
             .set(&User {
                 id: user_id,
                 email: user.email,
                 username: user.username,
                 password: user.password,
-            }).execute(conn)
-            .expect("Error updating user!");
+            }).execute(conn)?;
+
+        Ok(())
     }
 
-    pub fn delete(user_id: i32, conn: &PgConnection) -> bool {
-        diesel::delete(users::table.find(user_id))
-            .execute(conn)
-            .is_ok()
+    pub fn delete(user_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        diesel::delete(users.find(user_id)).execute(conn)?;
+
+        Ok(())
     }
 }

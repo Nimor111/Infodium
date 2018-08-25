@@ -35,11 +35,13 @@ pub struct NewTeam {
 }
 
 impl Team {
-    pub fn all(conn: &PgConnection) -> Vec<Team> {
-        teams.load::<Team>(conn).expect("Error loading teams!")
+    pub fn all(conn: &PgConnection) -> Result<Vec<Team>, diesel::result::Error> {
+        let all_teams = teams.load::<Team>(conn)?;
+
+        Ok(all_teams)
     }
 
-    pub fn create(conn: &PgConnection, team: NewTeam) -> Team {
+    pub fn create(conn: &PgConnection, team: NewTeam) -> Result<Team, diesel::result::Error> {
         let new_team = NewTeam {
             name: team.name,
             tla: team.tla,
@@ -51,13 +53,9 @@ impl Team {
 
         diesel::insert_into(teams::table)
             .values(&new_team)
-            .execute(conn)
-            .expect("Error creating new team!");
+            .execute(conn)?;
 
-        teams::table
-            .order(teams::id.desc())
-            .first(conn)
-            .expect("Error loading teams!")
+        Ok(teams.order(id.desc()).first(conn)?)
     }
 
     pub fn update(
@@ -89,6 +87,8 @@ impl Team {
         tid: i32,
         conn: &PgConnection,
     ) -> Result<Vec<Player>, diesel::result::Error> {
+        let _team = teams.find(tid).first::<Team>(conn)?;
+
         let team_players = teams
             .inner_join(players::dsl::players)
             .filter(players::dsl::team_id.eq(tid))

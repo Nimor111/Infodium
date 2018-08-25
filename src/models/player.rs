@@ -31,13 +31,13 @@ pub struct NewPlayer {
 }
 
 impl Player {
-    pub fn all(conn: &PgConnection) -> Vec<Player> {
-        players
-            .load::<Player>(conn)
-            .expect("Error loading players!")
+    pub fn all(conn: &PgConnection) -> Result<Vec<Player>, diesel::result::Error> {
+        let all_players = players.load::<Player>(conn)?;
+
+        Ok(all_players)
     }
 
-    pub fn create(conn: &PgConnection, player: NewPlayer) -> Player {
+    pub fn create(conn: &PgConnection, player: NewPlayer) -> Result<Player, diesel::result::Error> {
         let new_player = NewPlayer {
             name: player.name,
             position: player.position,
@@ -48,13 +48,9 @@ impl Player {
 
         diesel::insert_into(players::table)
             .values(&new_player)
-            .execute(conn)
-            .expect("Error creating new player!");
+            .execute(conn)?;
 
-        players::table
-            .order(players::id.desc())
-            .first(conn)
-            .expect("Error loading players!")
+        Ok(players.order(id.desc()).first(conn)?)
     }
 
     pub fn update(

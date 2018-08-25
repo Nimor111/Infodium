@@ -28,12 +28,19 @@ impl AuthResponse {
 }
 
 impl From<DieselError> for AuthResponse {
-    fn from(_: DieselError) -> Self {
-        AuthResponse::new(
-            Ok(JwtGuard),
-            json!({"error": "Not found!"}),
-            Status::NotFound,
-        )
+    fn from(err: DieselError) -> Self {
+        match err {
+            DieselError::NotFound => AuthResponse::new(
+                Ok(JwtGuard),
+                json!({"error": "Not found!"}),
+                Status::NotFound,
+            ),
+            _ => AuthResponse::new(
+                Ok(JwtGuard),
+                json!({"error": "Database error!"}),
+                Status::InternalServerError,
+            ),
+        }
     }
 }
 

@@ -100,7 +100,8 @@ pub fn rocket() -> (Rocket, db::Pool) {
         ).attach(options)
         .catch(catchers![
             handlers::unauthorized_handler,
-            handlers::not_found_handler
+            handlers::not_found_handler,
+            handlers::unprocessable_entity_handler
         ]);
 
     (rocket, db_pool)

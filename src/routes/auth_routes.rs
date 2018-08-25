@@ -1,7 +1,7 @@
 use rocket::http::Status;
-use rocket::response::status;
 use rocket_contrib::Json;
 
+use diesel;
 use diesel::prelude::*;
 
 use bcrypt::verify;
@@ -14,46 +14,41 @@ use schema::users::dsl::*;
 
 use utils::util::generate_jwt_token;
 
+use responses::api_response::ApiResponse;
+
 #[post("/register", data = "<user>")]
 pub fn register(
     conn: db::Connection,
     user: Result<NewUser, String>,
-) -> Result<Json<String>, status::Custom<Json<String>>> {
+) -> Result<ApiResponse, ApiResponse> {
     match user {
-        Ok(u) => Ok(Json(User::create(&conn, u))),
-        Err(e) => Err(status::Custom(Status::UnprocessableEntity, Json(e))),
+        Ok(u) => Ok(ApiResponse::new(
+            Some(json!(&User::create(&conn, u)?)),
+            Status::Ok,
+        )),
+        Err(_) => Err(ApiResponse::new(None, Status::UnprocessableEntity)),
     }
 }
 
 #[post("/login", data = "<user>")]
-pub fn login(
-    conn: db::Connection,
-    user: Json<NewUser>,
-) -> Result<Json<String>, status::Custom<Json<&'static str>>> {
-    let queried_user: Result<User, status::Custom<Json<&str>>> = users
+pub fn login(conn: db::Connection, user: Json<NewUser>) -> Result<ApiResponse, ApiResponse> {
+    let queried_user: Result<User, diesel::result::Error> = users
         .filter(email.eq(user.email.clone()))
         .select((id, email, username, password))
-        .first(&*conn)
-        .map_err(|_| status::Custom(Status::Unauthorized, Json("Wrong credentials!")));
+        .first(&*conn);
 
     let found_user = match queried_user {
         Ok(u) => u,
-        Err(e) => return Err(e),
+        Err(_) => return Err(ApiResponse::new(None, Status::Unauthorized)),
     };
 
     let valid = verify(&user.password, &found_user.password).unwrap();
     if !valid {
-        return Err(status::Custom(
-            Status::Unauthorized,
-            Json("Wrong credentials!"),
-        ));
+        return Err(ApiResponse::new(None, Status::Unauthorized));
     }
 
     match generate_jwt_token(json!({ "id": found_user.id })) {
-        Ok(token) => Ok(Json(token)),
-        Err(_) => Err(status::Custom(
-            Status::BadRequest,
-            Json("Something went wrong!"),
-        )),
+        Ok(token) => Ok(ApiResponse::new(Some(json!(token)), Status::Ok)),
+        Err(_) => Err(ApiResponse::new(None, Status::BadRequest)),
     }
 }

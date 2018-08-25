@@ -2,10 +2,15 @@ use rocket_contrib::Json;
 
 #[catch(401)]
 fn unauthorized_handler() -> Json<&'static str> {
-    Json("No authentication token present!")
+    Json("Incorrect authentication credentials!")
 }
 
 #[catch(404)]
 fn not_found_handler() -> Json<&'static str> {
     Json("Resource not found!")
+}
+
+#[catch(422)]
+fn unprocessable_entity_handler() -> Json<&'static str> {
+    Json("Invalid request data!")
 }

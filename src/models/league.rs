@@ -28,13 +28,13 @@ pub struct NewLeague {
 }
 
 impl League {
-    pub fn all(conn: &PgConnection) -> Vec<League> {
-        leagues
-            .load::<League>(conn)
-            .expect("Error loading leagues!")
+    pub fn all(conn: &PgConnection) -> Result<Vec<League>, diesel::result::Error> {
+        let all_leagues = leagues.load::<League>(conn)?;
+
+        Ok(all_leagues)
     }
 
-    pub fn create(conn: &PgConnection, league: NewLeague) -> League {
+    pub fn create(conn: &PgConnection, league: NewLeague) -> Result<League, diesel::result::Error> {
         let new_league = NewLeague {
             name: league.name,
             country: league.country,
@@ -43,13 +43,9 @@ impl League {
 
         diesel::insert_into(leagues::table)
             .values(&new_league)
-            .execute(conn)
-            .expect("Error creating new league!");
+            .execute(conn)?;
 
-        leagues::table
-            .order(leagues::id.desc())
-            .first(conn)
-            .expect("Error loading leagues!")
+        Ok(leagues.order(id.desc()).first(conn)?)
     }
 
     pub fn update(
@@ -78,6 +74,8 @@ impl League {
         lid: i32,
         conn: &PgConnection,
     ) -> Result<Vec<Team>, diesel::result::Error> {
+        let _league = leagues.find(lid).first::<League>(conn)?;
+
         let league_teams = leagues
             .inner_join(teams::dsl::teams)
             .filter(teams::dsl::league_id.eq(lid))

@@ -93,7 +93,7 @@ fn test_login_is_not_successful_with_invalid_email() {
         assert_eq!(response.status(), Status::Unauthorized);
         assert_eq!(
             response.body_string(),
-            Some("\"Wrong credentials!\"".to_string())
+            Some("\"Incorrect authentication credentials!\"".to_string())
         );
     })
 }
@@ -118,7 +118,7 @@ fn test_login_is_not_successful_with_invalid_password() {
         assert_eq!(response.status(), Status::Unauthorized);
         assert_eq!(
             response.body_string(),
-            Some("\"Wrong credentials!\"".to_string())
+            Some("\"Incorrect authentication credentials!\"".to_string())
         );
     })
 }
