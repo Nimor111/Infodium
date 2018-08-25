@@ -58,6 +58,6 @@ pub fn delete_team(
     Ok(AuthResponse::new(
         jwt,
         json!(&Team::delete(id, &conn)?),
-        Status::NoContent,
+        Status::Ok,
     ))
 }

@@ -61,6 +61,6 @@ pub fn delete_league(
     Ok(AuthResponse::new(
         jwt,
         json!(&League::delete(id, &conn)?),
-        Status::NoContent,
+        Status::Ok,
     ))
 }

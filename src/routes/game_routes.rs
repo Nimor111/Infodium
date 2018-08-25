@@ -55,6 +55,6 @@ pub fn delete_game(
     Ok(AuthResponse::new(
         jwt,
         json!(&Game::delete(id, &conn)?),
-        Status::NoContent,
+        Status::Ok,
     ))
 }

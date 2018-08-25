@@ -77,7 +77,7 @@ fn test_deletes_a_player_successfully() {
 
         let new_player_count = get_all_players(&conn).len();
 
-        assert_eq!(response.status(), Status::NoContent);
+        assert_eq!(response.status(), Status::Ok);
         assert_eq!(new_player_count, player_count - 1);
     })
 }

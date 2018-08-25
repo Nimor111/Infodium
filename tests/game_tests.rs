@@ -75,7 +75,7 @@ fn test_deletes_a_game_successfully() {
 
         let new_game_count = get_all_games(&conn).len();
 
-        assert_eq!(response.status(), Status::NoContent);
+        assert_eq!(response.status(), Status::Ok);
         assert_eq!(new_game_count, game_count - 1);
     })
 }

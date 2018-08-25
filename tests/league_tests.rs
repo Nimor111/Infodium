@@ -76,7 +76,7 @@ fn test_deletes_a_league_successfully() {
 
         let new_league_count = get_all_leagues(&conn).len();
 
-        assert_eq!(response.status(), Status::NoContent);
+        assert_eq!(response.status(), Status::Ok);
         assert_eq!(new_league_count, league_count - 1);
     })
 }
@@ -124,5 +124,18 @@ fn test_fetches_league_teams_successfully() {
 
         let body = response.body_string().unwrap();
         assert_eq!(from_str::<Vec<Team>>(&body).unwrap().len(), 2);
+    })
+}
+
+#[test]
+fn test_returns_not_found_if_league_does_not_exist() {
+    run_test!(|client, _conn, _jwt| {
+        let mut response = client.get(format!("/leagues/{}/teams", 0)).dispatch();
+
+        assert_eq!(response.status(), Status::NotFound);
+        assert_eq!(
+            response.body_string(),
+            Some("\"Resource not found!\"".to_string())
+        );
     })
 }

@@ -14,3 +14,8 @@ fn not_found_handler() -> Json<&'static str> {
 fn unprocessable_entity_handler() -> Json<&'static str> {
     Json("Invalid request data!")
 }
+
+#[catch(500)]
+fn internal_server_error_handler() -> Json<&'static str> {
+    Json("Internal server error!")
+}

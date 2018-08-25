@@ -53,6 +53,6 @@ pub fn delete_player(
     Ok(AuthResponse::new(
         jwt,
         json!(&Player::delete(id, &conn)?),
-        Status::NoContent,
+        Status::Ok,
     ))
 }

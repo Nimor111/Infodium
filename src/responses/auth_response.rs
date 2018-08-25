@@ -50,8 +50,8 @@ impl<'r> Responder<'r> for AuthResponse {
         let data = self.data;
         let status = self.status;
 
-        if status == Status::NotFound {
-            return Err(Status::NotFound);
+        if status == Status::NotFound || status == Status::InternalServerError {
+            return Err(status);
         }
 
         match token {
