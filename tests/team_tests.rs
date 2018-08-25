@@ -128,3 +128,16 @@ fn test_fetches_team_players_successfully() {
         assert_eq!(from_str::<Vec<Player>>(&body).unwrap().len(), 2);
     })
 }
+
+#[test]
+fn test_returns_not_found_if_team_does_not_exist() {
+    run_test!(|client, _conn, _jwt| {
+        let mut response = client.get(format!("/teams/{}/players", 0)).dispatch();
+
+        assert_eq!(response.status(), Status::NotFound);
+        assert_eq!(
+            response.body_string(),
+            Some("\"Resource not found!\"".to_string())
+        );
+    })
+}
