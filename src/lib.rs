@@ -23,6 +23,9 @@ extern crate validator_derive;
 extern crate chrono;
 extern crate rocket_cors;
 extern crate uuid;
+#[macro_use]
+extern crate log;
+extern crate fern;
 
 pub extern crate r2d2;
 pub extern crate r2d2_diesel;
@@ -30,6 +33,7 @@ pub extern crate rocket;
 
 pub mod db;
 pub mod handlers;
+pub mod logger;
 pub mod schema;
 
 pub mod guards;
@@ -44,6 +48,8 @@ use rocket::Rocket;
 use rocket_cors::{AllowedHeaders, AllowedOrigins};
 
 pub fn rocket() -> (Rocket, db::Pool) {
+    logger::setup_logger().unwrap();
+
     let (allowed_origins, _) = AllowedOrigins::some(&["http://localhost:3000"]);
 
     let options = rocket_cors::Cors {

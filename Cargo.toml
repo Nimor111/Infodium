@@ -34,6 +34,8 @@ validator = "*"
 validator_derive = "*"
 bcrypt = "0.2"
 rocket_cors = "0.3.0"
+log = "0.4"
+fern = "0.5"
 
 [dependencies.rocket_contrib]
 version = "*"

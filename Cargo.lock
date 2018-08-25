@@ -279,6 +279,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "fern"
+version = "0.5.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "log 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "foreign-types"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -378,7 +386,9 @@ dependencies = [
  "dotenv 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv_codegen 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "fake 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fern 0.5.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "frank_jwt 3.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "parking_lot 0.6.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2-diesel 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1255,6 +1265,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum dtoa 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)" = "6d301140eb411af13d3115f9a562c85cc6b541ade9dfa314132244aaee7489dd"
 "checksum error-chain 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d9435d864e017c3c6afeac1654189b06cdb491cf2ff73dbf0d73b0f292f42ff8"
 "checksum fake 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "ee967b904f8a2ffc72c1cce48981f08b1e5802a8c520aa02dd9cd78b95063a3e"
+"checksum fern 0.5.6 (registry+https://github.com/rust-lang/crates.io-index)" = "57915fe00a83af935983eb2d00b0ecc62419c4741b28c207ecbf98fd4a1b94c8"
 "checksum foreign-types 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1"
 "checksum foreign-types-shared 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 "checksum frank_jwt 3.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "2debb36c032c3e19cf8803666963a509034cc80f277d690b711b0acf6dbbf366"

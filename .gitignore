@@ -4,3 +4,6 @@
 
 # config file
 .env
+
+# logs
+output.log

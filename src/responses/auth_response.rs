@@ -35,11 +35,14 @@ impl From<DieselError> for AuthResponse {
                 json!({"error": "Not found!"}),
                 Status::NotFound,
             ),
-            _ => AuthResponse::new(
-                Ok(JwtGuard),
-                json!({"error": "Database error!"}),
-                Status::InternalServerError,
-            ),
+            _ => {
+                error!("{}", err);
+                AuthResponse::new(
+                    Ok(JwtGuard),
+                    json!({"error": "Database error!"}),
+                    Status::InternalServerError,
+                )
+            }
         }
     }
 }
