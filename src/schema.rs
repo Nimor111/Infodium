@@ -20,6 +20,14 @@ table! {
 }
 
 table! {
+    player_games (id) {
+        id -> Int4,
+        game_id -> Int4,
+        player_id -> Int4,
+    }
+}
+
+table! {
     players (id) {
         id -> Int4,
         team_id -> Nullable<Int4>,
@@ -53,7 +61,16 @@ table! {
 
 joinable!(games -> leagues (league_id));
 joinable!(games -> teams (team_id));
+joinable!(player_games -> games (game_id));
+joinable!(player_games -> players (player_id));
 joinable!(players -> teams (team_id));
 joinable!(teams -> leagues (league_id));
 
-allow_tables_to_appear_in_same_query!(games, leagues, players, teams, users,);
+allow_tables_to_appear_in_same_query!(
+    games,
+    leagues,
+    player_games,
+    players,
+    teams,
+    users,
+);

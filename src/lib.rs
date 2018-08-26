@@ -101,6 +101,9 @@ pub fn rocket() -> (Rocket, db::Pool) {
         ).mount(
             "/auth",
             routes![routes::auth_routes::register, routes::auth_routes::login],
+        ).mount(
+            "/player-games",
+            routes![routes::player_game_routes::create_player_game],
         ).attach(options)
         .catch(catchers![
             handlers::unauthorized_handler,
