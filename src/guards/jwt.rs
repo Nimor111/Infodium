@@ -1,9 +1,12 @@
+//! Request guard that checks if a jwt token is present in the request.
+
 use rocket::http::Status;
 use rocket::request::{self, FromRequest, Request};
 use rocket::Outcome;
 
 use utils::util::decode_token;
 
+/// Struct representing a successful jwt authentication
 #[derive(Debug)]
 pub struct JwtGuard;
 

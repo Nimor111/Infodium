@@ -1,3 +1,5 @@
+//! Module representing a Player entity in the api database
+
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -7,6 +9,7 @@ use schema::players::dsl::*;
 
 use models::team::Team;
 
+/// Struct representing a single row in the `players` table of the database
 #[table_name = "players"]
 #[derive(Serialize, Deserialize, Associations, Queryable, AsChangeset, Debug)]
 #[belongs_to(Team)]
@@ -19,6 +22,7 @@ pub struct Player {
     pub nationality: String,
 }
 
+/// Struct used in `create` and `update` functions of the entity
 #[table_name = "players"]
 #[derive(Insertable, Associations, Deserialize, Serialize)]
 #[belongs_to(Team)]

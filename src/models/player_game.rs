@@ -1,3 +1,5 @@
+//! Module representing a PlayerGame entity in the api database
+
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -12,6 +14,7 @@ use schema::player_games::dsl::*;
 use models::game::Game;
 use models::player::Player;
 
+/// Struct representing a single row in the `player_games` table of the database
 #[table_name = "player_games"]
 #[belongs_to(Player)]
 #[belongs_to(Game)]
@@ -22,6 +25,7 @@ pub struct PlayerGame {
     pub player_id: i32,
 }
 
+/// Struct used in `create` and `update` functions of the entity
 #[table_name = "player_games"]
 #[belongs_to(Player)]
 #[belongs_to(Game)]

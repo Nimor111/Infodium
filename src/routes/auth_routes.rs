@@ -1,3 +1,5 @@
+//! Routes for registration and login in the api
+
 use rocket::http::Status;
 use rocket_contrib::Json;
 
@@ -16,6 +18,8 @@ use utils::util::generate_jwt_token;
 
 use responses::api_response::ApiResponse;
 
+/// Attempt to register a user in the database.
+/// * If the data is invalid ( fails validation ), returns a `Status::UnprocessableEntity`
 #[post("/register", data = "<user>")]
 pub fn register(
     conn: db::Connection,
@@ -30,6 +34,10 @@ pub fn register(
     }
 }
 
+/// Attempt to login an existing user in the database with the provided credentials.
+/// * If the user doesn't exist, returns a `Status::Unauthorized`
+/// * If the password is wrong, returns a `Status::Unauthorized`
+/// * If the jwt token generation fails, returns a `Status::BadRequest`
 #[post("/login", data = "<user>")]
 pub fn login(conn: db::Connection, user: Json<NewUser>) -> Result<ApiResponse, ApiResponse> {
     let queried_user: Result<User, diesel::result::Error> = users

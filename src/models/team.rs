@@ -1,3 +1,5 @@
+//! Module representing a Team entity in the api database
+
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -9,6 +11,7 @@ use schema::teams::dsl::*;
 use models::league::League;
 use models::player::Player;
 
+/// Struct representing a single row in the `teams` table of the database
 #[table_name = "teams"]
 #[belongs_to(League)]
 #[derive(Serialize, Deserialize, Associations, Queryable, AsChangeset, Debug)]
@@ -22,6 +25,7 @@ pub struct Team {
     pub facebook: Option<String>,
 }
 
+/// Struct used in `create` and `update` functions of the entity
 #[table_name = "teams"]
 #[belongs_to(League)]
 #[derive(Insertable, Associations, Deserialize, Serialize)]

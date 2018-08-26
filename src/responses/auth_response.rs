@@ -1,3 +1,8 @@
+//! Module representing an authenticated response sent by the api
+//! in routes where authentication via jwt is needed.
+//! Validates whether the jwt is present.
+//! Contains the jwt, data to send and an http status.
+
 use std::io::Cursor;
 
 use rocket::http::{ContentType, Status};

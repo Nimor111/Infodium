@@ -8,8 +8,12 @@ use r2d2_diesel::ConnectionManager;
 
 use diesel::pg::PgConnection;
 
+/// Type alias for a r2d2 connection pool
 pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
+/// Attempt to connect to the database provided by the `DATABASE_URL` environment variable.
+/// # Panics
+/// * `DATABASE_URL` does not exist.
 pub fn connect() -> Result<Pool, r2d2::Error> {
     let database_url = dotenv!("DATABASE_URL");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
@@ -18,6 +22,7 @@ pub fn connect() -> Result<Pool, r2d2::Error> {
     Ok(pool)
 }
 
+/// Wrapper struct for a pooled database connection
 pub struct Connection(pub r2d2::PooledConnection<ConnectionManager<PgConnection>>);
 
 /// Attempts to retrieve a single connection from the managed database pool. If

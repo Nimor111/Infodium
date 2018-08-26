@@ -3,6 +3,7 @@ use fern;
 use log;
 use std;
 
+/// Setup logging for application. On every `error!`, `debug!`, `info!`, `warn!` macro call outputs logs to stdout and `output.log` file
 pub fn setup_logger() -> Result<(), fern::InitError> {
     fern::Dispatch::new()
         .format(|out, message, record| {

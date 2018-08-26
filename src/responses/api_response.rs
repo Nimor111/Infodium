@@ -1,3 +1,7 @@
+//! Module representing a standard response sent by the api
+//! in routes where no authentication via jwt is needed.
+//! Contains data to send and an http status.
+
 use std::io::Cursor;
 
 use rocket::http::{ContentType, Status};

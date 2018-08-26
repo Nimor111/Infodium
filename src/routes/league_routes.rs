@@ -1,3 +1,5 @@
+//! Routes for interacting the `League` entity
+
 use rocket_contrib::Json;
 
 use rocket::http::Status;
@@ -9,6 +11,8 @@ use guards::jwt::JwtGuard;
 use responses::api_response::ApiResponse;
 use responses::auth_response::AuthResponse;
 
+/// POST - create a new league with `league` data
+/// * Returns an HTTP 201 Created status
 #[post("/", data = "<league>")]
 pub fn create_league(
     conn: db::Connection,
@@ -22,6 +26,8 @@ pub fn create_league(
     ))
 }
 
+/// GET - fetch all leagues currently in the database
+/// * Returns an HTTP 200 Ok status
 #[get("/")]
 pub fn get_leagues(conn: db::Connection) -> Result<ApiResponse, ApiResponse> {
     Ok(ApiResponse::new(
@@ -30,6 +36,8 @@ pub fn get_leagues(conn: db::Connection) -> Result<ApiResponse, ApiResponse> {
     ))
 }
 
+/// GET - fetch teams in a league with an id of `id`
+/// * Returns an HTTP 200 Ok status
 #[get("/<id>/teams")]
 pub fn get_league_teams(conn: db::Connection, id: i32) -> Result<ApiResponse, ApiResponse> {
     Ok(ApiResponse::new(
@@ -38,6 +46,8 @@ pub fn get_league_teams(conn: db::Connection, id: i32) -> Result<ApiResponse, Ap
     ))
 }
 
+/// PUT - updates a game in the database with the `game` data and an id of `id`
+/// * Returns an HTTP 200 Ok status
 #[put("/<id>", data = "<league>")]
 pub fn update_league(
     id: i32,
@@ -52,6 +62,8 @@ pub fn update_league(
     ))
 }
 
+/// DELETE - deletes a game in the database with an id of `id`
+/// * Returns an HTTP 200 Ok status
 #[delete("/<id>")]
 pub fn delete_league(
     id: i32,

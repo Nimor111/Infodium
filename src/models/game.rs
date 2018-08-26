@@ -1,3 +1,5 @@
+//! Module representing a Game entity in the api database
+
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -15,6 +17,7 @@ use models::league::League;
 use models::player::Player;
 use models::team::Team;
 
+/// Struct representing a single row in the `games` table of the database
 #[table_name = "games"]
 #[belongs_to(Team)]
 #[belongs_to(League)]
@@ -29,6 +32,7 @@ pub struct Game {
     pub matchday: Option<NaiveDate>,
 }
 
+/// Struct used in `create` and `update` functions of the entity
 #[table_name = "games"]
 #[belongs_to(Team)]
 #[belongs_to(League)]

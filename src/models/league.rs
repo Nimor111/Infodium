@@ -1,3 +1,5 @@
+//! Module representing a League entity in the api database
+
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -10,6 +12,7 @@ use schema::teams;
 
 use models::team::Team;
 
+/// Struct representing a single row in the `leagues` table of the database
 #[table_name = "leagues"]
 #[derive(Serialize, Deserialize, Queryable, AsChangeset, Debug)]
 pub struct League {
@@ -19,6 +22,7 @@ pub struct League {
     pub current_matchday: Option<NaiveDate>,
 }
 
+/// Struct used in `create` and `update` functions of the entity
 #[table_name = "leagues"]
 #[derive(Insertable, Deserialize, Serialize)]
 pub struct NewLeague {

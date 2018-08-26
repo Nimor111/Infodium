@@ -47,6 +47,8 @@ use rocket::Rocket;
 
 use rocket_cors::{AllowedHeaders, AllowedOrigins};
 
+/// Setup rocket instance - mounts routes, sets up CORS options and registers custom error handlers.
+/// * Returns rocket instance and a db connection pool
 pub fn rocket() -> (Rocket, db::Pool) {
     let (allowed_origins, _) = AllowedOrigins::some(&["http://localhost:3000"]);
 

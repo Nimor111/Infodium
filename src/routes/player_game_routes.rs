@@ -1,3 +1,5 @@
+//! Routes for interacting the `PlayerGame` entity
+
 use db;
 use models::player_game::{NewPlayerGame, PlayerGame};
 
@@ -9,6 +11,8 @@ use guards::jwt::JwtGuard;
 
 use responses::auth_response::AuthResponse;
 
+/// POST - create a new player game with `player_game` data
+/// * Returns an HTTP 201 Created status
 #[post("/", data = "<player_game>")]
 pub fn create_player_game(
     conn: db::Connection,

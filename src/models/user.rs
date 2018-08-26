@@ -1,3 +1,5 @@
+//! Module representing a User entity in the api database
+
 use rocket::data::{self, FromData};
 use rocket::http::Status;
 use rocket::Outcome::*;
@@ -18,6 +20,7 @@ use utils::util::generate_jwt_token;
 
 use validator::Validate;
 
+/// Struct representing a single row in the `users` table of the database
 #[table_name = "users"]
 #[derive(Serialize, Deserialize, Queryable, AsChangeset, Debug)]
 pub struct User {
@@ -27,6 +30,7 @@ pub struct User {
     pub password: String,
 }
 
+/// Struct used in `create` and `update` functions of the entity
 #[table_name = "users"]
 #[derive(Serialize, Deserialize, Insertable, Validate, Clone, Debug)]
 pub struct NewUser {
