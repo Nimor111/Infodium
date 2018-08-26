@@ -12,7 +12,11 @@ use guards::jwt::JwtGuard;
 use responses::auth_response::AuthResponse;
 
 /// POST - create a new player game with `player_game` data
-/// * Returns an HTTP 201 Created status
+/// # Returns
+/// * HTTP 201 Created
+///
+/// # Errors
+/// * Status::InternalServerError on database error
 #[post("/", data = "<player_game>")]
 pub fn create_player_game(
     conn: db::Connection,

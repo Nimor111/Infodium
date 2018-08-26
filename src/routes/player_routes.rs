@@ -12,7 +12,11 @@ use responses::api_response::ApiResponse;
 use responses::auth_response::AuthResponse;
 
 /// GET - fetch all players currently in the database
-/// * Returns an HTTP 200 Ok status
+/// # Returns
+/// * HTTP 200 Ok
+///
+/// # Errors
+/// * Status::InternalServerError on database error
 #[get("/")]
 pub fn get_players(conn: db::Connection) -> Result<ApiResponse, ApiResponse> {
     Ok(ApiResponse::new(
@@ -22,7 +26,11 @@ pub fn get_players(conn: db::Connection) -> Result<ApiResponse, ApiResponse> {
 }
 
 /// POST - create a new player with `player` data
-/// * Returns an HTTP 201 Created status
+/// # Returns
+/// * HTTP 201 Created
+///
+/// # Errors
+/// * Status::InternalServerError on database error
 #[post("/", data = "<player>")]
 pub fn create_player(
     conn: db::Connection,
@@ -37,7 +45,12 @@ pub fn create_player(
 }
 
 /// PUT - updates a player in the database with the `player` data and an id of `id`
-/// * Returns an HTTP 200 Ok status
+/// # Returns
+/// * HTTP 200 Ok
+///
+/// # Errors
+/// * Status::NotFound on non-existent resource
+/// * Status::InternalServerError on database error
 #[put("/<id>", data = "<player>")]
 pub fn update_player(
     id: i32,
@@ -53,7 +66,11 @@ pub fn update_player(
 }
 
 /// DELETE - deletes a player in the database with an id of `id`
-/// * Returns an HTTP 200 Ok status
+/// # Returns
+/// * HTTP 200 Ok
+///
+/// # Errors
+/// * Status::InternalServerError on database error
 #[delete("/<id>")]
 pub fn delete_player(
     id: i32,
