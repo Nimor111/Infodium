@@ -11,12 +11,15 @@ use infodium::db;
 use infodium::models::game::{Game, NewGame};
 use infodium::models::league::{League, NewLeague};
 use infodium::models::player::{NewPlayer, Player};
+use infodium::models::player_game::{NewPlayerGame, PlayerGame};
 use infodium::models::team::{NewTeam, Team};
 use infodium::models::user::{NewUser, User};
 use infodium::schema::games::dsl::games;
 use infodium::schema::games::dsl::id as gid;
 use infodium::schema::leagues::dsl::id as lid;
 use infodium::schema::leagues::dsl::leagues;
+use infodium::schema::player_games::dsl::id as pgid;
+use infodium::schema::player_games::dsl::player_games;
 use infodium::schema::players::dsl::id as pid;
 use infodium::schema::players::dsl::players;
 use infodium::schema::teams::dsl::id as tid;
@@ -26,6 +29,7 @@ use infodium::schema::users::dsl::users;
 
 use diesel;
 use diesel::prelude::*;
+
 pub fn gen_league(conn: &db::Connection) -> League {
     let new_league = NewLeague {
         name: fake!(Name.name),
@@ -137,4 +141,22 @@ pub fn gen_game(conn: &db::Connection) -> Game {
         .find(game_id[0])
         .first(&**conn)
         .expect("Failed to fetch game!")
+}
+
+pub fn gen_player_game(conn: &db::Connection) -> PlayerGame {
+    let game_id = gen_game(conn).id;
+    let player_id = gen_player(conn, None).id;
+
+    let player_game = NewPlayerGame { game_id, player_id };
+
+    let player_game_id: Vec<i32> = diesel::insert_into(player_games)
+        .values(&player_game)
+        .returning(pgid)
+        .get_results(&**conn)
+        .unwrap();
+
+    player_games
+        .find(player_game_id[0])
+        .first(&**conn)
+        .expect("Failed to fetch player game!")
 }

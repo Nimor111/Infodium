@@ -18,8 +18,8 @@ use models::player::Player;
 #[derive(Serialize, Deserialize, Associations, Queryable, AsChangeset, Debug)]
 pub struct PlayerGame {
     pub id: i32,
-    pub player_id: i32,
     pub game_id: i32,
+    pub player_id: i32,
 }
 
 #[table_name = "player_games"]
@@ -27,8 +27,8 @@ pub struct PlayerGame {
 #[belongs_to(Game)]
 #[derive(Serialize, Deserialize, Insertable, Associations, Debug)]
 pub struct NewPlayerGame {
-    pub player_id: i32,
     pub game_id: i32,
+    pub player_id: i32,
 }
 
 impl PlayerGame {
