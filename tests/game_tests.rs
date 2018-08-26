@@ -12,9 +12,12 @@ use diesel::prelude::*;
 
 use infodium::db;
 use infodium::models::game::Game;
+use infodium::models::player::Player;
 use infodium::schema::games::dsl::*;
 
 use rocket::http::{ContentType, Header, Status};
+
+use serde_json::from_str;
 
 #[macro_use]
 mod common;
@@ -22,7 +25,7 @@ mod seed;
 
 use common::DB_LOCK;
 
-use seed::{gen_game, gen_league, gen_team};
+use seed::{gen_game, gen_league, gen_player, gen_player_game, gen_team};
 
 fn get_all_games(conn: &db::Connection) -> Vec<Game> {
     games.load::<Game>(&**conn).expect("Error loading games!")
@@ -102,5 +105,25 @@ fn test_updates_a_game_successfully() {
 
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(returned_game.venue, new_venue);
+    })
+}
+
+#[test]
+fn test_fetches_game_players_successfully() {
+    run_test!(|client, conn, _jwt| {
+        let game = gen_game(&conn);
+        let player = gen_player(&conn, None);
+
+        let player_game = gen_player_game(&conn, Some(game.id), Some(player.id));
+
+        let mut response = client
+            .get(format!("/games/{}/players", game.id))
+            .header(ContentType::JSON)
+            .dispatch();
+
+        assert_eq!(response.status(), Status::Ok);
+
+        let body = response.body_string().unwrap();
+        assert_eq!(from_str::<Vec<Player>>(&body).unwrap().len(), 1);
     })
 }

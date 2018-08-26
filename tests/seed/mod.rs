@@ -143,9 +143,19 @@ pub fn gen_game(conn: &db::Connection) -> Game {
         .expect("Failed to fetch game!")
 }
 
-pub fn gen_player_game(conn: &db::Connection) -> PlayerGame {
-    let game_id = gen_game(conn).id;
-    let player_id = gen_player(conn, None).id;
+pub fn gen_player_game(
+    conn: &db::Connection,
+    game_id: Option<i32>,
+    player_id: Option<i32>,
+) -> PlayerGame {
+    let game_id = match game_id {
+        Some(i) => i,
+        None => gen_game(conn).id,
+    };
+    let player_id = match player_id {
+        Some(i) => i,
+        None => gen_player(conn, None).id,
+    };
 
     let player_game = NewPlayerGame { game_id, player_id };
 

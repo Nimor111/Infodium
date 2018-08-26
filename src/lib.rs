@@ -96,7 +96,8 @@ pub fn rocket() -> (Rocket, db::Pool) {
                 routes::game_routes::get_games,
                 routes::game_routes::create_game,
                 routes::game_routes::update_game,
-                routes::game_routes::delete_game
+                routes::game_routes::delete_game,
+                routes::game_routes::get_game_players
             ],
         ).mount(
             "/auth",

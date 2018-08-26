@@ -19,6 +19,14 @@ pub fn get_games(conn: db::Connection) -> Result<ApiResponse, ApiResponse> {
     ))
 }
 
+#[get("/<id>/players")]
+pub fn get_game_players(id: i32, conn: db::Connection) -> Result<ApiResponse, ApiResponse> {
+    Ok(ApiResponse::new(
+        Some(json!(&Game::get_game_players(id, &conn)?)),
+        Status::Ok,
+    ))
+}
+
 #[post("/", data = "<game>")]
 pub fn create_game(
     conn: db::Connection,

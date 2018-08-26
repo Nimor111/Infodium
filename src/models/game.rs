@@ -8,8 +8,11 @@ use chrono::NaiveDate;
 
 use schema::games;
 use schema::games::dsl::*;
+use schema::player_games;
+use schema::players;
 
 use models::league::League;
+use models::player::Player;
 use models::team::Team;
 
 #[table_name = "games"]
@@ -81,8 +84,24 @@ impl Game {
     }
 
     pub fn delete(gid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
-        diesel::delete(games::table.find(gid)).execute(conn)?;
+        diesel::delete(games.find(gid)).execute(conn)?;
 
         Ok(())
+    }
+
+    pub fn get_game_players(
+        gid: i32,
+        conn: &PgConnection,
+    ) -> Result<Vec<Player>, diesel::result::Error> {
+        let game_player_ids: Vec<i32> = player_games::table
+            .filter(player_games::dsl::game_id.eq(gid))
+            .select(player_games::dsl::player_id)
+            .load(conn)?;
+
+        let game_players = players::table
+            .filter(players::dsl::id.eq_any(game_player_ids))
+            .load(conn)?;
+
+        Ok(game_players)
     }
 }
