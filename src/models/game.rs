@@ -97,6 +97,8 @@ impl Game {
         gid: i32,
         conn: &PgConnection,
     ) -> Result<Vec<Player>, diesel::result::Error> {
+        let _game = games.find(gid).first::<Game>(conn)?;
+
         let game_player_ids: Vec<i32> = player_games::table
             .filter(player_games::dsl::game_id.eq(gid))
             .select(player_games::dsl::player_id)

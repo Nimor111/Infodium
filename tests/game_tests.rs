@@ -127,3 +127,12 @@ fn test_fetches_game_players_successfully() {
         assert_eq!(from_str::<Vec<Player>>(&body).unwrap().len(), 1);
     })
 }
+
+#[test]
+fn test_fails_to_fetch_players_of_non_existent_game() {
+    run_test!(|client, _conn, _jwt| {
+        let mut response = client.get(format!("/games/{}/players", 0)).dispatch();
+
+        assert_eq!(response.status(), Status::NotFound);
+    })
+}
