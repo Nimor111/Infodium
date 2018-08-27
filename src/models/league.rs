@@ -57,6 +57,8 @@ impl League {
         conn: &PgConnection,
         league: NewLeague,
     ) -> Result<League, diesel::result::Error> {
+        let _league = leagues.find(lid).first::<League>(conn)?;
+
         diesel::update(leagues.find(lid))
             .set(&League {
                 id: lid,
@@ -69,6 +71,8 @@ impl League {
     }
 
     pub fn delete(lid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        let _league = leagues.find(lid).first::<League>(conn)?;
+
         diesel::delete(leagues.find(lid)).execute(conn)?;
 
         Ok(())

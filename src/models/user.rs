@@ -77,13 +77,15 @@ impl User {
     }
 
     pub fn update(
-        user_id: i32,
+        uid: i32,
         conn: &PgConnection,
         user: NewUser,
     ) -> Result<(), diesel::result::Error> {
-        diesel::update(users.find(user_id))
+        let _user = users.find(uid).first::<User>(conn)?;
+
+        diesel::update(users.find(uid))
             .set(&User {
-                id: user_id,
+                id: uid,
                 email: user.email,
                 username: user.username,
                 password: user.password,
@@ -92,8 +94,10 @@ impl User {
         Ok(())
     }
 
-    pub fn delete(user_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
-        diesel::delete(users.find(user_id)).execute(conn)?;
+    pub fn delete(uid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        let _user = users.find(uid).first::<User>(conn)?;
+
+        diesel::delete(users.find(uid)).execute(conn)?;
 
         Ok(())
     }

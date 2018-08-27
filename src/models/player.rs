@@ -58,19 +58,23 @@ impl Player {
     }
 
     pub fn update(
-        player_id: i32,
+        pid: i32,
         conn: &PgConnection,
         player: Player,
     ) -> Result<Player, diesel::result::Error> {
-        diesel::update(players::table.find(player_id))
+        let _player = players.find(pid).first::<Player>(conn)?;
+
+        diesel::update(players::table.find(pid))
             .set(&player)
             .execute(conn)?;
 
-        Ok(players.find(player_id).first(conn)?)
+        Ok(players.find(pid).first(conn)?)
     }
 
-    pub fn delete(player_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
-        diesel::delete(players::table.find(player_id)).execute(conn)?;
+    pub fn delete(pid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        let _player = players.find(pid).first::<Player>(conn)?;
+
+        diesel::delete(players::table.find(pid)).execute(conn)?;
 
         Ok(())
     }

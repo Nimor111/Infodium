@@ -63,13 +63,15 @@ impl Team {
     }
 
     pub fn update(
-        team_id: i32,
+        tid: i32,
         conn: &PgConnection,
         team: NewTeam,
     ) -> Result<Team, diesel::result::Error> {
-        diesel::update(teams::table.find(team_id))
+        let _team = teams.find(tid).first::<Team>(conn)?;
+
+        diesel::update(teams::table.find(tid))
             .set(&Team {
-                id: team_id,
+                id: tid,
                 name: team.name,
                 tla: team.tla,
                 address: team.address,
@@ -78,11 +80,13 @@ impl Team {
                 league_id: team.league_id,
             }).execute(conn)?;
 
-        Ok(teams.find(team_id).first(conn)?)
+        Ok(teams.find(tid).first(conn)?)
     }
 
-    pub fn delete(team_id: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
-        diesel::delete(teams::table.find(team_id)).execute(conn)?;
+    pub fn delete(tid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        let _team = teams.find(tid).first::<Team>(conn)?;
+
+        diesel::delete(teams::table.find(tid)).execute(conn)?;
 
         Ok(())
     }

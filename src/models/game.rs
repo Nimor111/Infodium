@@ -73,6 +73,8 @@ impl Game {
         conn: &PgConnection,
         game: NewGame,
     ) -> Result<Game, diesel::result::Error> {
+        let _game = games.find(gid).first::<Game>(conn)?;
+
         diesel::update(games::table.find(gid))
             .set(&Game {
                 id: gid,
@@ -88,6 +90,8 @@ impl Game {
     }
 
     pub fn delete(gid: i32, conn: &PgConnection) -> Result<(), diesel::result::Error> {
+        let _game = games.find(gid).first::<Game>(conn)?;
+
         diesel::delete(games.find(gid)).execute(conn)?;
 
         Ok(())
