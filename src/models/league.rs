@@ -52,6 +52,12 @@ impl League {
         Ok(leagues.order(id.desc()).first(conn)?)
     }
 
+    pub fn get(lid: i32, conn: &PgConnection) -> Result<League, diesel::result::Error> {
+        let league = leagues.find(lid).first::<League>(conn)?;
+
+        Ok(league)
+    }
+
     pub fn update(
         lid: i32,
         conn: &PgConnection,

@@ -59,6 +59,14 @@ pub fn get_league_teams(conn: db::Connection, id: i32) -> Result<ApiResponse, Ap
     ))
 }
 
+#[get("/<id>")]
+pub fn get_league(conn: db::Connection, id: i32) -> Result<ApiResponse, ApiResponse> {
+    Ok(ApiResponse::new(
+        Some(json!(&League::get(id, &conn)?)),
+        Status::Ok,
+    ))
+}
+
 /// PUT - updates a game in the database with the `game` data and an id of `id`
 /// # Returns
 /// * HTTP 200 Ok

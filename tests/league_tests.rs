@@ -63,6 +63,23 @@ fn test_adds_a_league_successfully() {
 }
 
 #[test]
+fn test_fetches_a_league_successfully() {
+    run_test!(|client, conn, _jwt| {
+        let league = gen_league(&conn);
+
+        let mut response = client.get(format!("/leagues/{}", league.id)).dispatch();
+
+        assert_eq!(response.status(), Status::Ok);
+
+        let body = response.body_string().unwrap();
+        let received_league = from_str::<League>(&body).unwrap();
+        assert_eq!(received_league.name, league.name);
+        assert_eq!(received_league.country, league.country);
+        assert_eq!(received_league.current_matchday, league.current_matchday);
+    })
+}
+
+#[test]
 fn test_deletes_a_league_successfully() {
     run_test!(|client, conn, jwt| {
         let league_id = gen_league(&conn).id;

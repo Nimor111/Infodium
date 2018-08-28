@@ -87,6 +87,7 @@ pub fn rocket() -> (Rocket, db::Pool) {
             "/leagues",
             routes![
                 routes::league_routes::get_leagues,
+                routes::league_routes::get_league,
                 routes::league_routes::create_league,
                 routes::league_routes::update_league,
                 routes::league_routes::delete_league,

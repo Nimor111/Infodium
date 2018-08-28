@@ -114,7 +114,7 @@ fn test_fetches_game_players_successfully() {
         let game = gen_game(&conn);
         let player = gen_player(&conn, None);
 
-        let player_game = gen_player_game(&conn, Some(game.id), Some(player.id));
+        let _player_game = gen_player_game(&conn, Some(game.id), Some(player.id));
 
         let mut response = client
             .get(format!("/games/{}/players", game.id))
@@ -131,7 +131,7 @@ fn test_fetches_game_players_successfully() {
 #[test]
 fn test_fails_to_fetch_players_of_non_existent_game() {
     run_test!(|client, _conn, _jwt| {
-        let mut response = client.get(format!("/games/{}/players", 0)).dispatch();
+        let response = client.get(format!("/games/{}/players", 0)).dispatch();
 
         assert_eq!(response.status(), Status::NotFound);
     })
