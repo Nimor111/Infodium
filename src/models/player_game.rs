@@ -4,10 +4,6 @@ use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 
-use uuid::Uuid;
-
-use chrono::NaiveDate;
-
 use schema::player_games;
 use schema::player_games::dsl::*;
 

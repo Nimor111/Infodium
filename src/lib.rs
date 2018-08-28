@@ -6,7 +6,6 @@
 
 #[macro_use]
 pub extern crate serde_derive;
-#[macro_use]
 pub extern crate rocket_contrib;
 #[macro_use]
 pub extern crate diesel;
@@ -53,7 +52,7 @@ pub fn rocket() -> (Rocket, db::Pool) {
     let (allowed_origins, _) = AllowedOrigins::some(&["http://localhost:3000"]);
 
     let options = rocket_cors::Cors {
-        allowed_origins: allowed_origins,
+        allowed_origins,
         allowed_methods: vec![Method::Get, Method::Post, Method::Put, Method::Delete]
             .into_iter()
             .map(From::from)
