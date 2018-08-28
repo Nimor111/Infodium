@@ -59,6 +59,13 @@ pub fn get_league_teams(conn: db::Connection, id: i32) -> Result<ApiResponse, Ap
     ))
 }
 
+/// GET - fetch a league with an id of `id`
+/// # Returns
+/// * HTTP 200 Ok
+///
+/// # Errors
+/// * Status::NotFound on non-existent resource
+/// * Status::InternalServerError on database error
 #[get("/<id>")]
 pub fn get_league(conn: db::Connection, id: i32) -> Result<ApiResponse, ApiResponse> {
     Ok(ApiResponse::new(
