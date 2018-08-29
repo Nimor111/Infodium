@@ -57,7 +57,12 @@ pub fn rocket() -> (Rocket, db::Pool) {
             .into_iter()
             .map(From::from)
             .collect(),
-        allowed_headers: AllowedHeaders::some(&["Authorization", "Accept", "x-auth"]),
+        allowed_headers: AllowedHeaders::some(&[
+            "Authorization",
+            "Accept",
+            "x-auth",
+            "content-type",
+        ]),
         allow_credentials: true,
         ..Default::default()
     };
