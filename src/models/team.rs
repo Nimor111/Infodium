@@ -17,7 +17,7 @@ use models::player::Player;
 #[derive(Serialize, Deserialize, Associations, Queryable, AsChangeset, Debug)]
 pub struct Team {
     pub id: i32,
-    pub league_id: i32,
+    pub league_id: Option<i32>,
     pub name: String,
     pub tla: String,
     pub address: Option<String>,
@@ -30,12 +30,12 @@ pub struct Team {
 #[belongs_to(League)]
 #[derive(Insertable, Associations, Deserialize, Serialize)]
 pub struct NewTeam {
+    pub league_id: Option<i32>,
     pub name: String,
     pub tla: String,
     pub address: Option<String>,
     pub website: Option<String>,
     pub facebook: Option<String>,
-    pub league_id: i32,
 }
 
 impl Team {

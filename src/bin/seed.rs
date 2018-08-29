@@ -68,7 +68,7 @@ fn gen_team(lid: i32) -> NewTeam {
         address: Some(fake!(Address.street_address)),
         facebook: Some(String::from(fake!(Lorem.word))),
         website: Some(String::from(fake!(Lorem.word))),
-        league_id: lid,
+        league_id: Some(lid),
     }
 }
 

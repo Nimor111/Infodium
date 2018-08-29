@@ -98,7 +98,7 @@ pub fn gen_team(conn: &db::Connection, league_id: Option<i32>) -> Team {
     };
 
     let new_team = NewTeam {
-        league_id: league_id,
+        league_id: Some(league_id),
         name: fake!(Name.name),
         tla: String::from(fake!(Lorem.word)),
         address: Some(fake!(Address.street_address)),

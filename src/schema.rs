@@ -41,7 +41,7 @@ table! {
 table! {
     teams (id) {
         id -> Int4,
-        league_id -> Int4,
+        league_id -> Nullable<Int4>,
         name -> Text,
         tla -> Text,
         address -> Nullable<Text>,
