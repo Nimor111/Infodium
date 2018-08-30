@@ -52,6 +52,31 @@ fn test_registers_a_user_successfully() {
 }
 
 #[test]
+fn test_register_is_not_successful_with_existing_email() {
+    run_test!(|client, conn, _jwt| {
+        let user = gen_user(&conn);
+
+        let user_count = get_all_users(&conn).len();
+
+        let body = json!({
+            "username": fake!(Internet.user_name),
+            "email": user.email,
+            "password": "password123",
+        }).to_string();
+
+        let response = client
+            .post("/auth/register")
+            .header(ContentType::JSON)
+            .body(body)
+            .dispatch();
+
+        let new_user_count = get_all_users(&conn).len();
+        assert_eq!(response.status(), Status::UnprocessableEntity);
+        assert_eq!(new_user_count, user_count);
+    })
+}
+
+#[test]
 fn test_login_is_successful_with_valid_credentials() {
     run_test!(|client, conn, _jwt| {
         let user = gen_user(&conn);

@@ -5,6 +5,8 @@ use rocket::http::Status;
 use rocket::Outcome::*;
 use rocket::{Data, Request};
 
+use db;
+
 use serde_json::from_reader;
 
 use bcrypt::hash;
@@ -18,7 +20,7 @@ use schema::users::dsl::*;
 
 use utils::util::generate_jwt_token;
 
-use validator::Validate;
+use validator::{Validate, ValidationError};
 
 /// Struct representing a single row in the `users` table of the database
 #[table_name = "users"]
@@ -35,6 +37,7 @@ pub struct User {
 #[derive(Serialize, Deserialize, Insertable, Validate, Clone, Debug)]
 pub struct NewUser {
     #[validate(email(message = "Email %s is not valid"))]
+    #[validate(custom = "validate_unique_email")]
     pub email: String,
     pub username: Option<String>,
     #[validate(length(min = "6", message = "Password too short!"))]
@@ -54,6 +57,15 @@ impl FromData for NewUser {
             Err(e) => Failure((Status::BadRequest, e.to_string())),
         }
     }
+}
+
+fn validate_unique_email(e: &str) -> Result<(), ValidationError> {
+    let conn = db::Connection(db::connect().unwrap().get().unwrap());
+    if let Err(_) = users.filter(email.eq(e)).first::<User>(&*conn) {
+        return Ok(());
+    }
+
+    Err(ValidationError::new("Email already exists!"))
 }
 
 impl User {
