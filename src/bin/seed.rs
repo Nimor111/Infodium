@@ -26,7 +26,7 @@ use self::infodium::db::*;
 
 fn gen_user() -> NewUser {
     NewUser {
-        username: fake!(Internet.user_name),
+        username: Some(fake!(Internet.user_name)),
         password: String::from(fake!(Lorem.word)),
         email: fake!(Internet.free_email),
     }

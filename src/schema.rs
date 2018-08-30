@@ -54,7 +54,7 @@ table! {
     users (id) {
         id -> Int4,
         email -> Text,
-        username -> Text,
+        username -> Nullable<Text>,
         password -> Text,
     }
 }

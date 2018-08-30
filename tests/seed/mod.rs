@@ -75,7 +75,7 @@ pub fn gen_user(conn: &db::Connection) -> User {
 
     let new_user = NewUser {
         email: fake!(Internet.free_email),
-        username: fake!(Internet.user_name),
+        username: Some(fake!(Internet.user_name)),
         password: hashed_pass,
     };
 

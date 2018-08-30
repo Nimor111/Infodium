@@ -26,7 +26,7 @@ use validator::Validate;
 pub struct User {
     pub id: i32,
     pub email: String,
-    pub username: String,
+    pub username: Option<String>,
     pub password: String,
 }
 
@@ -36,7 +36,7 @@ pub struct User {
 pub struct NewUser {
     #[validate(email(message = "Email %s is not valid"))]
     pub email: String,
-    pub username: String,
+    pub username: Option<String>,
     #[validate(length(min = "6", message = "Password too short!"))]
     pub password: String,
 }

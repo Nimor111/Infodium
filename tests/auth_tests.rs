@@ -58,7 +58,6 @@ fn test_login_is_successful_with_valid_credentials() {
 
         let body = json!({
             "email": user.email,
-            "username": user.username,
             "password": "password123",
         }).to_string();
 
@@ -75,12 +74,9 @@ fn test_login_is_successful_with_valid_credentials() {
 
 #[test]
 fn test_login_is_not_successful_with_invalid_email() {
-    run_test!(|client, conn, _jwt| {
-        let user = gen_user(&conn);
-
+    run_test!(|client, _conn, _jwt| {
         let body = json!({
             "email": fake!(Internet.free_email),
-            "username": user.username,
             "password": "password123"
         }).to_string();
 
@@ -105,7 +101,6 @@ fn test_login_is_not_successful_with_invalid_password() {
 
         let body = json!({
             "email": user.email,
-            "username": user.username,
             "password": "password234"
         }).to_string();
 
