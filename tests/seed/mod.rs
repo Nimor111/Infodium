@@ -118,9 +118,15 @@ pub fn gen_team(conn: &db::Connection, league_id: Option<i32>) -> Team {
         .expect("Failed to fetch team!")
 }
 
-pub fn gen_game(conn: &db::Connection) -> Game {
-    let league_id = gen_league(conn).id;
-    let team_id = gen_team(conn, None).id;
+pub fn gen_game(conn: &db::Connection, league_id: Option<i32>, team_id: Option<i32>) -> Game {
+    let league_id = match league_id {
+        Some(i) => i,
+        None => gen_league(conn).id,
+    };
+    let team_id = match team_id {
+        Some(i) => i,
+        None => gen_team(conn, None).id,
+    };
 
     let new_game = NewGame {
         team_id: team_id,
@@ -150,7 +156,7 @@ pub fn gen_player_game(
 ) -> PlayerGame {
     let game_id = match game_id {
         Some(i) => i,
-        None => gen_game(conn).id,
+        None => gen_game(conn, None, None).id,
     };
     let player_id = match player_id {
         Some(i) => i,

@@ -23,7 +23,7 @@ mod seed;
 
 use common::DB_LOCK;
 
-use seed::gen_player;
+use seed::{gen_player, gen_team};
 
 fn get_all_players(conn: &db::Connection) -> Vec<Player> {
     players
@@ -106,5 +106,23 @@ fn test_updates_a_player_successfully() {
 
         assert_eq!(response.status(), Status::Ok);
         assert_eq!(returned_player.name, new_name);
+    })
+}
+
+#[test]
+fn test_sets_player_team_to_none_on_team_delete() {
+    run_test!(|client, conn, jwt| {
+        let team = gen_team(&conn, None);
+        let player = gen_player(&conn, Some(team.id));
+
+        assert!(player.team_id.is_some());
+
+        let _response = client
+            .delete(format!("/teams/{}", team.id))
+            .header(Header::new("x-auth", jwt))
+            .dispatch();
+
+        let player = fetch_player(player.id, &conn);
+        assert!(player.team_id.is_none());
     })
 }

@@ -141,3 +141,21 @@ fn test_returns_not_found_if_team_does_not_exist() {
         );
     })
 }
+
+#[test]
+fn test_sets_team_league_to_none_on_league_delete() {
+    run_test!(|client, conn, jwt| {
+        let league = gen_league(&conn);
+        let team = gen_team(&conn, Some(league.id));
+
+        assert!(team.league_id.is_some());
+
+        let _response = client
+            .delete(format!("/leagues/{}", league.id))
+            .header(Header::new("x-auth", jwt))
+            .dispatch();
+
+        let team = fetch_team(team.id, &conn);
+        assert!(team.league_id.is_none());
+    })
+}

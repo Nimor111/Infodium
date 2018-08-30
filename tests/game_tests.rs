@@ -67,7 +67,7 @@ fn test_adds_a_game_successfully() {
 #[test]
 fn test_deletes_a_game_successfully() {
     run_test!(|client, conn, jwt| {
-        let game_id = gen_game(&conn).id;
+        let game_id = gen_game(&conn, None, None).id;
 
         let game_count = get_all_games(&conn).len();
 
@@ -86,7 +86,7 @@ fn test_deletes_a_game_successfully() {
 #[test]
 fn test_updates_a_game_successfully() {
     run_test!(|client, conn, jwt| {
-        let game = gen_game(&conn);
+        let game = gen_game(&conn, None, None);
         let new_venue = fake!(Name.name);
 
         let body = json!({
@@ -111,7 +111,7 @@ fn test_updates_a_game_successfully() {
 #[test]
 fn test_fetches_game_players_successfully() {
     run_test!(|client, conn, _jwt| {
-        let game = gen_game(&conn);
+        let game = gen_game(&conn, None, None);
         let player = gen_player(&conn, None);
 
         let _player_game = gen_player_game(&conn, Some(game.id), Some(player.id));
@@ -134,5 +134,45 @@ fn test_fails_to_fetch_players_of_non_existent_game() {
         let response = client.get(format!("/games/{}/players", 0)).dispatch();
 
         assert_eq!(response.status(), Status::NotFound);
+    })
+}
+
+#[test]
+fn test_removes_game_on_delete_team() {
+    run_test!(|client, conn, jwt| {
+        let league = gen_league(&conn);
+        let team = gen_team(&conn, None);
+
+        let _game = gen_game(&conn, Some(league.id), Some(team.id));
+
+        let game_count = get_all_games(&conn).len();
+
+        let _response = client
+            .delete(format!("/teams/{}", team.id))
+            .header(Header::new("x-auth", jwt))
+            .dispatch();
+
+        let new_game_count = get_all_games(&conn).len();
+        assert_eq!(new_game_count, game_count - 1);
+    })
+}
+
+#[test]
+fn test_removes_game_on_delete_league() {
+    run_test!(|client, conn, jwt| {
+        let league = gen_league(&conn);
+        let team = gen_team(&conn, None);
+
+        let _game = gen_game(&conn, Some(league.id), Some(team.id));
+
+        let game_count = get_all_games(&conn).len();
+
+        let _response = client
+            .delete(format!("/leagues/{}", league.id))
+            .header(Header::new("x-auth", jwt))
+            .dispatch();
+
+        let new_game_count = get_all_games(&conn).len();
+        assert_eq!(new_game_count, game_count - 1);
     })
 }
