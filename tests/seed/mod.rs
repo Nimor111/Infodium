@@ -32,7 +32,7 @@ use diesel::prelude::*;
 
 pub fn gen_league(conn: &db::Connection) -> League {
     let new_league = NewLeague {
-        name: fake!(Name.name),
+        name: String::from(fake!(Lorem.word)),
         country: String::from(fake!(Lorem.word)),
         current_matchday: None,
     };
@@ -99,7 +99,7 @@ pub fn gen_team(conn: &db::Connection, league_id: Option<i32>) -> Team {
 
     let new_team = NewTeam {
         league_id: Some(league_id),
-        name: fake!(Name.name),
+        name: String::from(fake!(Lorem.word)),
         tla: String::from(fake!(Lorem.word)),
         address: Some(fake!(Address.street_address)),
         website: None,
