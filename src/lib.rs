@@ -1,4 +1,3 @@
-#![feature(attr_literals)]
 #![feature(custom_attribute)]
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
