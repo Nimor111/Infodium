@@ -25,8 +25,6 @@ extern crate uuid;
 extern crate log;
 extern crate fern;
 
-pub extern crate r2d2;
-pub extern crate r2d2_diesel;
 pub extern crate rocket;
 
 pub mod db;

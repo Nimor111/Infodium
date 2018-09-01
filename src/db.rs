@@ -3,8 +3,8 @@ use rocket::request::{self, FromRequest};
 use rocket::{Outcome, Request, State};
 use std::ops::Deref;
 
-use r2d2;
-use r2d2_diesel::ConnectionManager;
+use diesel::r2d2;
+use diesel::r2d2::ConnectionManager;
 
 use diesel::pg::PgConnection;
 
@@ -14,7 +14,7 @@ pub type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 /// Attempt to connect to the database provided by the `DATABASE_URL` environment variable.
 /// # Panics
 /// * `DATABASE_URL` does not exist.
-pub fn connect() -> Result<Pool, r2d2::Error> {
+pub fn connect() -> Result<Pool, r2d2::PoolError> {
     let database_url = dotenv!("DATABASE_URL");
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     let pool = r2d2::Pool::builder().build(manager)?;
