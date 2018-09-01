@@ -66,11 +66,4 @@ joinable!(player_games -> players (player_id));
 joinable!(players -> teams (team_id));
 joinable!(teams -> leagues (league_id));
 
-allow_tables_to_appear_in_same_query!(
-    games,
-    leagues,
-    player_games,
-    players,
-    teams,
-    users,
-);
+allow_tables_to_appear_in_same_query!(games, leagues, player_games, players, teams, users,);
