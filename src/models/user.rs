@@ -61,7 +61,7 @@ impl FromData for NewUser {
 
 fn validate_unique_email(e: &str) -> Result<(), ValidationError> {
     let conn = db::Connection(db::connect().unwrap().get().unwrap());
-    if let Err(_) = users.filter(email.eq(e)).first::<User>(&*conn) {
+    if users.filter(email.eq(e)).first::<User>(&*conn).is_err() {
         return Ok(());
     }
 
