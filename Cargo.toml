@@ -16,7 +16,7 @@ name="infodium"
 path="src/lib.rs"
 
 [dependencies]
-rocket = "0.3.15"
+rocket = "0.4.0"
 rocket_codegen = "0.3.15"
 frank_jwt = "3.0.0"
 serde = "1.0"
