@@ -41,5 +41,5 @@ default-features = false
 features = ["json"]
 
 [dev-dependencies]
-parking_lot = { version = "0.6", features = ["nightly"] }
+parking_lot = { version = "0.7", features = ["nightly"] }
 rand = "0.5"
