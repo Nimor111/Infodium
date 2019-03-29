@@ -27,7 +27,7 @@ dotenv = "*"
 dotenv_codegen = "*"
 chrono = { version = "0.4", features = ["serde"] }
 fake = "*"
-uuid = { version = "0.6", features = ["v4"] }
+uuid = { version = "0.7", features = ["v4"] }
 validator = "*"
 validator_derive = "*"
 bcrypt = "0.2"
